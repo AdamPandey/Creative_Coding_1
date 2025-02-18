@@ -72,7 +72,7 @@ class BarChart {
             ellipse(barLength + 15, yPos + this.barWidth / 2, 30, 30);
             fill(0);
             textAlign(CENTER, CENTER);
-            textSize(10);
+            textSize(15);
             textFont(this.customFont);
             text(this.data[i][this.yValues[0]], barLength + 15, yPos + this.barWidth / 2);
         }
@@ -109,12 +109,16 @@ class BarChart {
         noFill();
         stroke(this.axisColor);
         strokeWeight(this.axisThickness);
-
-        let numberOfTicks = 5;
+    
         if (this.type === 'horizontal') {
-            let tickIncrement = this.chartWidth / numberOfTicks;
-            for (let i = 0; i <= numberOfTicks; i++) {
-                line(tickIncrement * i, 0, tickIncrement * i, this.tickLength);
+            const maxValue = max(this.data.map(row => row[this.yValues[0]])); 
+            const tickIncrement = 100; 
+            const numTicks = Math.floor(maxValue / tickIncrement) + 1; 
+            const scaler = this.chartWidth / maxValue; 
+    
+            for (let i = 0; i < numTicks; i++) {
+                let xPos = i * tickIncrement * scaler;
+                line(xPos, 0, xPos, this.tickLength);
             }
         }
         pop();
@@ -131,8 +135,8 @@ class BarChart {
                 fill(this.axisTextColour);
                 textFont(this.customFont);
                 textAlign(RIGHT, CENTER);
-                textSize(10);
-                text(this.data[i][this.xValue], -this.tickLength - 5, yPos + this.barWidth / 2);
+                textSize(20);
+                text(this.data[i][this.xValue], -this.tickLength - 20, yPos + this.barWidth / 2);
             }
         }
         pop();
@@ -147,14 +151,16 @@ class BarChart {
         textAlign(RIGHT, CENTER);
         textSize(10);
         textFont(this.customFont);
-
-        const numberOfTicks = 5;
+    
         if (this.type === 'horizontal') {
             const maxValue = max(this.data.map(row => row[this.yValues[0]]));
-            const tickIncrement = maxValue / numberOfTicks;
-            for (let i = 0; i <= numberOfTicks; i++) {
-                const labelValue = Math.round(tickIncrement * i);
-                const xPos = (this.chartWidth / numberOfTicks) * i;
+            const tickIncrement = 100;
+            const numTicks = Math.floor(maxValue / tickIncrement) + 1;
+            const scaler = this.chartWidth / maxValue;
+    
+            for (let i = 0; i < numTicks; i++) {
+                const labelValue = i * tickIncrement; 
+                const xPos = i * tickIncrement * scaler;
                 text(labelValue, xPos, this.tickLength + 15);
             }
         }
@@ -165,7 +171,7 @@ class BarChart {
         push();
         fill(this.axisTextColour);
         textAlign(CENTER, CENTER);
-        textSize(30);
+        textSize(50);
         textFont(this.customFont);
         text(this.title, this.chartPosX + this.chartWidth / 2, this.chartPosY - 80);
         pop();
@@ -208,7 +214,7 @@ class BarChart {
         push();
         translate(this.chartPosX, this.chartPosY);
         rotate(-90);
-        text(this.yAxisTitle, 0, -this.chartWidth / 2);
+        text(this.yAxisTitle, -280, -200);
         pop();
         pop();
     }
