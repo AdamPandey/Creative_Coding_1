@@ -3,8 +3,8 @@ class BarChart {
         // Required options
         this.data = options.data;
         this.xValue = options.xValue;
-        this.yValues = options.yValues || [options.yValue]; 
-        this.type = options.type || 'vertical'; 
+        this.yValues = options.yValues || [options.yValue];
+        this.type = options.type || 'vertical';
 
         // Chart dimensions and styling
         this.chartHeight = options.chartHeight || 500;
@@ -22,16 +22,24 @@ class BarChart {
         this.xAxisTitle = options.xAxisTitle || '';
         this.yAxisTitle = options.yAxisTitle || '';
 
-        // Colors
+        
         this.barColours = options.barColours || [color(255, 215, 0)];
         this.axisColor = options.axisColor || color(125);
         this.axisTextColour = options.axisTextColour || color(255, 255, 255);
 
-        // Average line options
+       
         this.showAverageLine = options.showAverageLine || false;
         this.averageLineColor = options.averageLineColor || color(255, 0, 0);
 
         
+        if (this.type === 'horizontal') {
+            this.gap = (this.chartHeight - (this.data.length * this.barWidth) - (this.margin * 2)) / (this.data.length - 1);
+            this.scaler = this.chartWidth / (max(this.data.map(row => row[this.yValues[0]])) || 1);
+        } else {
+            
+            this.gap = 0; 
+            this.scaler = 1; 
+        }
     }
 
     renderBars() {
@@ -49,6 +57,38 @@ class BarChart {
         pop();
     }
 
+    renderHorizontalBars() {
+        push();
+        translate(0, this.margin); 
+        for (let i = 0; i < this.data.length; i++) {
+            let yPos = (this.barWidth + this.gap) * i;
+            let barLength = this.data[i][this.yValues[0]] * this.scaler;
+            fill(this.barColours[0]);
+            noStroke();
+            rect(0, yPos, barLength, this.barWidth);
+
+            
+            fill(255);
+            ellipse(barLength + 15, yPos + this.barWidth / 2, 30, 30);
+            fill(0);
+            textAlign(CENTER, CENTER);
+            textSize(10);
+            textFont(this.customFont);
+            text(this.data[i][this.yValues[0]], barLength + 15, yPos + this.barWidth / 2);
+        }
+        pop();
+    }
+
+    
+    renderVerticalBars() {
+        
+        console.log("Vertical bars not implemented yet.");
+    }
+
+    renderStackedBars() {
+        
+        console.log("Stacked bars not implemented yet.");
+    }
 
     renderAxis() {
         push();
@@ -57,7 +97,7 @@ class BarChart {
         stroke(this.axisColor);
         strokeWeight(this.axisThickness);
         if (this.type === 'horizontal') {
-            line(0, 0, this.chartWidth, 0); 
+            line(0, 0, this.chartWidth, 0);
             line(0, 0, 0, this.chartHeight); 
         }
         pop();
@@ -171,6 +211,20 @@ class BarChart {
         text(this.yAxisTitle, 0, -this.chartWidth / 2);
         pop();
         pop();
+    }
+
+    renderAverageLine() {
+        if (this.showAverageLine && this.type === 'horizontal') {
+            push();
+            translate(this.chartPosX, this.chartPosY);
+            let totalSum = this.data.reduce((sum, row) => sum + row[this.yValues[0]], 0);
+            let average = totalSum / this.data.length;
+            let xPos = average * this.scaler;
+            stroke(this.averageLineColor);
+            strokeWeight(2);
+            line(xPos, 0, xPos, this.chartHeight);
+            pop();
+        }
     }
 
     render() {

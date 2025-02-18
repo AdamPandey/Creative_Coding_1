@@ -14,27 +14,24 @@ function setup() {
     noLoop();
     cleanData();
 
-
-    // Horizontal Bar Chart
     charts.push(new BarChart({
         data: cleanedData,
-        xValue: "Age_Group",
-        yValues: ["Male"],
+        xValue: "Title",
+        yValues: ["Domestic"],
         type: "horizontal",
         chartHeight: 500,
         chartWidth: 600,
         barWidth: 40,
         margin: 15,
         axisThickness: 3,
-        chartPosX: 900,
+        chartPosX: 200,
         chartPosY: 650,
         customFont: customfont,
-        title: "Horizontal Bar Chart - Male Ages",
-        xAxisTitle: "Number of Males",
-        yAxisTitle: "Age Group",
-        barColours: [color(0, 191, 255)],
-        axisColor: color(125),
-        axisTextColour: color(255, 255, 255)
+        title: "Horizontal Bar Chart - Domestic Box Office",
+        xAxisTitle: "Box Office (In Millions USD)",
+        yAxisTitle: "Movie Title",
+        barColours: [color(255, 215, 0)],
+        showAverageLine: true
     }));
 
 }
