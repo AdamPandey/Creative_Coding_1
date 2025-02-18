@@ -149,7 +149,7 @@ class BarChart {
         fill(this.axisTextColour);
         noStroke();
         textAlign(RIGHT, CENTER);
-        textSize(10);
+        textSize(20);
         textFont(this.customFont);
     
         if (this.type === 'horizontal') {
@@ -182,13 +182,15 @@ class BarChart {
         translate(this.chartPosX, this.chartPosY);
         stroke(this.axisColor);
         strokeWeight(1);
-        const numberOfTicks = 5;
-
+    
         if (this.type === 'horizontal') {
             const maxValue = max(this.data.map(row => row[this.yValues[0]]));
-            const tickIncrement = maxValue / numberOfTicks;
-            for (let i = 0; i <= numberOfTicks; i++) {
-                const xPos = (this.chartWidth / numberOfTicks) * i;
+            const tickIncrement = 100; // Match the 100M steps
+            const numTicks = Math.floor(maxValue / tickIncrement) + 1; // Same as ticks
+            const scaler = this.chartWidth / maxValue; // Same scaler as ticks
+    
+            for (let i = 0; i < numTicks; i++) {
+                const xPos = i * tickIncrement * scaler;
                 line(xPos, 0, xPos, this.chartHeight);
             }
         }
