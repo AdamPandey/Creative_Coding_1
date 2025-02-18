@@ -50,8 +50,9 @@ function cleanData() {
     }
 
     for (let i = 0; i < cleanedData.length; i++) {
-        cleanedData[i].Female = parseInt(cleanedData[i].Female);
-        cleanedData[i].Male = parseInt(cleanedData[i].Male);
-        cleanedData[i].Total = parseInt(cleanedData[i].Total);
+        cleanedData[i].Domestic = parseInt(parseInt(cleanedData[i]["Domestic (USD)"]) / 1000000);
+        cleanedData[i].International = cleanedData[i]["International (USD)"] === "Unknown" ? 
+            0 : parseInt(parseInt(cleanedData[i]["International (USD)"]) / 1000000);
+        cleanedData[i].Total = parseInt(parseInt(cleanedData[i]["Total Worldwide (USD)"]) / 1000000);
     }
 }
