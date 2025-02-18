@@ -167,7 +167,7 @@ class BarChart {
         textAlign(CENTER, CENTER);
         textSize(30);
         textFont(this.customFont);
-        text(this.title, this.chartPosX + this.chartWidth / 2, this.chartPosY - this.chartHeight - 50);
+        text(this.title, this.chartPosX + this.chartWidth / 2, this.chartPosY - 80);
         pop();
     }
 
@@ -195,7 +195,7 @@ class BarChart {
         textAlign(CENTER, CENTER);
         textSize(20);
         textFont(this.customFont);
-        text(this.xAxisTitle, this.chartPosX + this.chartWidth / 2, this.chartPosY + 130);
+        text(this.xAxisTitle, this.chartPosX + this.chartWidth / 2, this.chartPosY - 30);
         pop();
     }
 
