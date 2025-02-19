@@ -339,7 +339,11 @@ class BarChart {
         textAlign(CENTER, CENTER);
         textSize(this.axisTitleSize);
         textFont(this.customFont);
-        text(this.xAxisTitle, this.chartPosX + this.chartWidth / 2, this.chartPosY - 30);
+        if (this.type === 'horizontal') {
+            text(this.xAxisTitle, this.chartPosX + this.chartWidth / 2, this.chartPosY - 30);
+        } else {
+            text(this.xAxisTitle, this.chartPosX + this.chartWidth / 2, this.chartPosY + this.padding * 2);
+        }
         pop();
     }
 
@@ -351,7 +355,7 @@ class BarChart {
         textFont(this.customFont);
         push();
         if (this.type === 'horizontal') {
-            translate(this.chartPosX, this.chartPosY - 2);
+            translate(this.chartPosX - 130, this.chartPosY - );
         } else {
             translate(this.chartPosX - 100, this.chartPosY - this.chartHeight / 2);
         }
