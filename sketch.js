@@ -34,6 +34,25 @@ function setup() {
         showAverageLine: true
     }));
 
+    charts.push(new BarChart({
+        data: cleanedData,
+        xValue: "Title",
+        yValues: ["Domestic"],
+        type: "vertical",
+        chartHeight: 500,
+        chartWidth: 600,
+        barWidth: 40,
+        margin: 15,
+        axisThickness: 3,
+        chartPosX: 200,
+        chartPosY: 650,
+        customFont: customfont,
+        title: "Vertical Bar Chart - Domestic Box Office",
+        xAxisTitle: "Movie Title",
+        yAxisTitle: "Box Office (In Millions USD)",
+        barColours: [color(255, 215, 0)],
+        showAverageLine: true
+    }));
 }
 
 function draw() {
