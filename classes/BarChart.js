@@ -350,7 +350,7 @@ class BarChart {
         textSize(this.axisTitleSize);
         textFont(this.customFont);
         push();
-        translate(this.chartPosX - this.padding, this.chartPosY - this.chartHeight / 2);
+        translate(this.chartPosX - this.padding, this.chartPosY - 2);
         rotate(-90);
         text(this.yAxisTitle, 0, 0);
         pop();

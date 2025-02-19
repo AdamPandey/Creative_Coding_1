@@ -64,7 +64,7 @@ function setup() {
         barWidth: 40,
         margin: 15,
         axisThickness: 3,
-        chartPosX: 1800,
+        chartPosX: 2000,
         chartPosY: 650,
         customFont: customfont,
         title: "Stacked Bar Chart - Box Office",
