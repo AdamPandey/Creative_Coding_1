@@ -355,7 +355,7 @@ class BarChart {
         textFont(this.customFont);
         push();
         if (this.type === 'horizontal') {
-            translate(this.chartPosX - 130, this.chartPosY - );
+            translate(this.chartPosX - 100, this.chartPosY + 190);
         } else {
             translate(this.chartPosX - 100, this.chartPosY - this.chartHeight / 2);
         }
