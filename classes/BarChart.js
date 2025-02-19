@@ -232,7 +232,11 @@ class BarChart {
         textAlign(CENTER, CENTER);
         textSize(30);
         textFont(this.customFont);
-        text(this.title, this.chartPosX + this.chartWidth / 2, this.chartPosY - this.chartHeight - 50);
+        if (this.type === 'horizontal') {
+            text(this.title, this.chartPosX + this.chartWidth / 2, this.chartPosY - 50);
+        } else {
+            text(this.title, this.chartPosX + this.chartWidth / 2, this.chartPosY - this.chartHeight - 50);
+        }
         pop();
     }
 
