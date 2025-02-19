@@ -237,7 +237,7 @@ class BarChart {
                 textSize(this.labelSize);
                 push();
                 translate(xPos + this.barWidth / 2, this.padding);
-                rotate(-90);
+                rotate(-PI/2);
                 text(displayTitle, 0, 0);
                 pop();
             }
@@ -359,7 +359,7 @@ class BarChart {
         } else {
             translate(this.chartPosX - 100, this.chartPosY - this.chartHeight / 2);
         }
-        rotate(-90);
+        rotate(-PI/2);
         text(this.yAxisTitle, 0, 0);
         pop();
         pop();
