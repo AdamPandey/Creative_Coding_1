@@ -48,10 +48,10 @@ class BarChart {
             this.gap = (this.chartWidth - (this.data.length * this.barWidth) - (this.margin * 2)) / (this.data.length - 1);
             const maxTotal = max(this.data.map(row => this.yValues.reduce((sum, y) => sum + row[y], 0)));
             this.scaler = this.chartHeight / (maxTotal || 1);
-        }else if (this.type === 'percentStacked') {
+        } else if (this.type === 'percentStacked') {
             this.gap = (this.chartWidth - (this.data.length * this.barWidth) - (this.margin * 2)) / (this.data.length - 1);
             this.scaler = this.chartHeight;
-        }else {
+        } else {
             this.gap = 0;
             this.scaler = 1;
         }
@@ -92,7 +92,7 @@ class BarChart {
         translate(this.margin, 0);
         for (let i = 0; i < this.data.length; i++) {
             let xPos = (this.barWidth + this.gap) * i;
-            let barHeight = this.data[i][this.yValues[0]] * this.scaler;
+            let barHeight = Math.min(this.data[i][this.yValues[0]] * this.scaler, this.chartHeight); // Cap at chartHeight
             fill(this.barColours[0]);
             noStroke();
             rect(xPos, -barHeight, this.barWidth, barHeight);
@@ -134,13 +134,19 @@ class BarChart {
         for (let i = 0; i < this.data.length; i++) {
             let xPos = (this.barWidth + this.gap) * i;
             let accumulatedHeight = 0;
+            let total = this.yValues.reduce((sum, y) => sum + this.data[i][y], 0);
 
             for (let j = 0; j < this.yValues.length; j++) {
-                let segmentHeight = this.data[i][this.yValues[j]] * this.scaler;
+                let value = this.data[i][this.yValues[j]];
+                let segmentHeight = this.type === 'percentStacked' ? 
+                    (total === 0 ? 0 : (value / total) * this.scaler) : 
+                    value * this.scaler;
+                // Cap accumulated height at chartHeight
+                let cappedSegmentHeight = Math.min(segmentHeight, this.chartHeight - accumulatedHeight);
                 fill(this.barColours[j % this.barColours.length]);
                 noStroke();
-                rect(xPos, -accumulatedHeight - segmentHeight, this.barWidth, segmentHeight);
-                accumulatedHeight += segmentHeight;
+                rect(xPos, -accumulatedHeight - cappedSegmentHeight, this.barWidth, cappedSegmentHeight);
+                accumulatedHeight += cappedSegmentHeight;
 
                 if (this.type === 'stacked') {
                     fill(255);
@@ -150,6 +156,15 @@ class BarChart {
                     textSize(this.labelSize);
                     textFont(this.customFont);
                     text(this.data[i][this.yValues[j]], xPos + this.barWidth / 2, -accumulatedHeight - this.padding / 2);
+                } else if (this.type === 'percentStacked') {
+                    let percent = total === 0 ? 0 : Math.round((value / total) * 100);
+                    fill(255);
+                    ellipse(xPos + this.barWidth / 2, -accumulatedHeight - this.padding / 2, 30, 30);
+                    fill(0);
+                    textAlign(CENTER, CENTER);
+                    textSize(this.labelSize);
+                    textFont(this.customFont);
+                    text(`${percent}%`, xPos + this.barWidth / 2, -accumulatedHeight - this.padding / 2);
                 }
             }
 
@@ -293,8 +308,8 @@ class BarChart {
                 const yPos = -i * tickIncrement * scaler;
                 text(labelValue, -this.tickLength - this.padding / 2, yPos);
             }
-        }else if (this.type === 'percentStacked') {
-            const tickIncrement = 25; 
+        } else if (this.type === 'percentStacked') {
+            const tickIncrement = 25; // 0%, 25%, 50%, 75%, 100%
             const numTicks = 4;
             const scaler = this.chartHeight / 100;
 
@@ -351,7 +366,7 @@ class BarChart {
                 const yPos = -i * tickIncrement * scaler;
                 line(0, yPos, this.chartWidth, yPos);
             }
-        }else if (this.type === 'percentStacked') {
+        } else if (this.type === 'percentStacked') {
             const tickIncrement = 25;
             const numTicks = 4;
             const scaler = this.chartHeight / 100;

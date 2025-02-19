@@ -105,7 +105,7 @@ function setup() {
         margin: 15,
         axisThickness: 3,
         chartPosX: 1050,
-        chartPosY: 1650,
+        chartPosY: 1500,
         customFont: customfont,
         title: "100% Stacked Bar Chart - Box Office",
         xAxisTitle: "Movie Title",
