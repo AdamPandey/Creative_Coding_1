@@ -27,11 +27,17 @@ class BarChart {
         this.axisColor = options.axisColor || color(125);
         this.axisTextColour = options.axisTextColour || color(255, 255, 255);
 
-        
+        // Average line options
         this.showAverageLine = options.showAverageLine || false;
         this.averageLineColor = options.averageLineColor || color(255, 0, 0);
 
-        
+        // Dynamic spacing and sizing
+        this.titleSize = options.titleSize || Math.min(this.chartWidth, this.chartHeight) * 0.08;
+        this.axisTitleSize = options.axisTitleSize || Math.min(this.chartWidth, this.chartHeight) * 0.05;
+        this.labelSize = options.labelSize || Math.min(this.chartWidth, this.chartHeight) * 0.03;
+        this.padding = options.padding || Math.min(this.chartWidth, this.chartHeight) * 0.1;
+
+        // Calculate gap and scaler based on chart type
         if (this.type === 'horizontal') {
             this.gap = (this.chartHeight - (this.data.length * this.barWidth) - (this.margin * 2)) / (this.data.length - 1);
             this.scaler = this.chartWidth / (max(this.data.map(row => row[this.yValues[0]])) || 1);
@@ -40,12 +46,27 @@ class BarChart {
             this.scaler = this.chartHeight / (max(this.data.map(row => row[this.yValues[0]])) || 1);
         } else if (this.type === 'stacked') {
             this.gap = (this.chartWidth - (this.data.length * this.barWidth) - (this.margin * 2)) / (this.data.length - 1);
-            const maxTotal = max(this.data.map(row => this.yValues.reduce((sum, y) => sum + row[y], 0))); 
+            const maxTotal = max(this.data.map(row => this.yValues.reduce((sum, y) => sum + row[y], 0)));
             this.scaler = this.chartHeight / (maxTotal || 1);
         } else {
             this.gap = 0;
             this.scaler = 1;
         }
+
+        // Movie title abbreviations
+        this.titleAbbreviations = {
+            "Batman: The Movie": "Batman '66",
+            "Batman": "Batman '89",
+            "Batman Returns": "Returns",
+            "Batman Forever": "Forever",
+            "Batman & Robin": "& Robin",
+            "Batman Begins": "Begins",
+            "The Dark Knight": "Dark Knight",
+            "The Dark Knight Rises": "Rises",
+            "Batman v Superman: Dawn of Justice": "BvS",
+            "Justice League": "Justice",
+            "The Batman": "The Batman"
+        };
     }
 
     renderBars() {
@@ -74,12 +95,12 @@ class BarChart {
             rect(xPos, -barHeight, this.barWidth, barHeight);
 
             fill(255);
-            ellipse(xPos + this.barWidth / 2, -barHeight - 15, 30, 30);
+            ellipse(xPos + this.barWidth / 2, -barHeight - this.padding / 2, 30, 30);
             fill(0);
             textAlign(CENTER, CENTER);
-            textSize(10);
+            textSize(this.labelSize);
             textFont(this.customFont);
-            text(this.data[i][this.yValues[0]], xPos + this.barWidth / 2, -barHeight - 15);
+            text(this.data[i][this.yValues[0]], xPos + this.barWidth / 2, -barHeight - this.padding / 2);
         }
         pop();
     }
@@ -94,12 +115,12 @@ class BarChart {
             noStroke();
             rect(0, yPos, barLength, this.barWidth);
             fill(255);
-            ellipse(barLength + 15, yPos + this.barWidth / 2, 30, 30);
+            ellipse(barLength + this.padding / 2, yPos + this.barWidth / 2, 30, 30);
             fill(0);
             textAlign(CENTER, CENTER);
-            textSize(10);
+            textSize(this.labelSize);
             textFont(this.customFont);
-            text(this.data[i][this.yValues[0]], barLength + 15, yPos + this.barWidth / 2);
+            text(this.data[i][this.yValues[0]], barLength + this.padding / 2, yPos + this.barWidth / 2);
         }
         pop();
     }
@@ -111,36 +132,33 @@ class BarChart {
             let xPos = (this.barWidth + this.gap) * i;
             let accumulatedHeight = 0;
 
-           
             for (let j = 0; j < this.yValues.length; j++) {
                 let segmentHeight = this.data[i][this.yValues[j]] * this.scaler;
-                fill(this.barColours[j % this.barColours.length]); 
+                fill(this.barColours[j % this.barColours.length]);
                 noStroke();
                 rect(xPos, -accumulatedHeight - segmentHeight, this.barWidth, segmentHeight);
                 accumulatedHeight += segmentHeight;
 
-                
                 if (this.type === 'stacked') {
                     fill(255);
-                    ellipse(xPos + this.barWidth / 2, -accumulatedHeight - 15, 30, 30);
+                    ellipse(xPos + this.barWidth / 2, -accumulatedHeight - this.padding / 2, 30, 30);
                     fill(0);
                     textAlign(CENTER, CENTER);
-                    textSize(10);
+                    textSize(this.labelSize);
                     textFont(this.customFont);
-                    text(this.data[i][this.yValues[j]], xPos + this.barWidth / 2, -accumulatedHeight - 15);
+                    text(this.data[i][this.yValues[j]], xPos + this.barWidth / 2, -accumulatedHeight - this.padding / 2);
                 }
             }
 
-           
             if (this.type === 'stacked') {
                 let total = this.yValues.reduce((sum, y) => sum + this.data[i][y], 0);
                 fill(255);
-                ellipse(xPos + this.barWidth / 2, -accumulatedHeight - 15, 30, 30);
+                ellipse(xPos + this.barWidth / 2, -accumulatedHeight - this.padding / 2, 30, 30);
                 fill(0);
                 textAlign(CENTER, CENTER);
-                textSize(10);
+                textSize(this.labelSize);
                 textFont(this.customFont);
-                text(total, xPos + this.barWidth / 2, -accumulatedHeight - 15);
+                text(total, xPos + this.barWidth / 2, -accumulatedHeight - this.padding / 2);
             }
         }
         pop();
@@ -203,23 +221,24 @@ class BarChart {
         push();
         translate(this.margin, 0);
         for (let i = 0; i < this.data.length; i++) {
+            let displayTitle = this.titleAbbreviations[this.data[i][this.xValue]] || this.data[i][this.xValue];
             if (this.type === 'horizontal') {
                 let yPos = (this.barWidth + this.gap) * i;
                 fill(this.axisTextColour);
                 textFont(this.customFont);
                 textAlign(RIGHT, CENTER);
-                textSize(10);
-                text(this.data[i][this.xValue], -this.tickLength - 5, yPos + this.barWidth / 2);
+                textSize(this.labelSize);
+                text(displayTitle, -this.tickLength - 5, yPos + this.barWidth / 2);
             } else if (this.type === 'vertical' || this.type === 'stacked') {
                 let xPos = (this.barWidth + this.gap) * i;
                 fill(this.axisTextColour);
                 textFont(this.customFont);
                 textAlign(CENTER, CENTER);
-                textSize(10);
+                textSize(this.labelSize);
                 push();
-                translate(xPos + this.barWidth / 2, 100);
+                translate(xPos + this.barWidth / 2, this.padding);
                 rotate(-90);
-                text(this.data[i][this.xValue], 0, 0);
+                text(displayTitle, 0, 0);
                 pop();
             }
         }
@@ -233,7 +252,7 @@ class BarChart {
         fill(this.axisTextColour);
         noStroke();
         textAlign(RIGHT, CENTER);
-        textSize(10);
+        textSize(this.labelSize);
         textFont(this.customFont);
 
         if (this.type === 'horizontal') {
@@ -247,7 +266,7 @@ class BarChart {
                 const labelValue = i * tickIncrement;
                 const xPos = i * tickIncrement * scaler;
                 if (xPos <= this.chartWidth) {
-                    text(labelValue, xPos, this.tickLength + 15);
+                    text(labelValue, xPos, this.tickLength + this.padding / 2);
                 }
             }
         } else if (this.type === 'vertical' || this.type === 'stacked') {
@@ -260,7 +279,7 @@ class BarChart {
             for (let i = 0; i <= numTicks; i++) {
                 const labelValue = i * tickIncrement;
                 const yPos = -i * tickIncrement * scaler;
-                text(labelValue, -this.tickLength - 5, yPos);
+                text(labelValue, -this.tickLength - this.padding / 2, yPos);
             }
         }
         pop();
@@ -270,12 +289,12 @@ class BarChart {
         push();
         fill(this.axisTextColour);
         textAlign(CENTER, CENTER);
-        textSize(30);
+        textSize(this.titleSize);
         textFont(this.customFont);
         if (this.type === 'horizontal') {
-            text(this.title, this.chartPosX + this.chartWidth / 2, this.chartPosY - 50);
+            text(this.title, this.chartPosX + this.chartWidth / 2, this.chartPosY - this.padding);
         } else {
-            text(this.title, this.chartPosX + this.chartWidth / 2, this.chartPosY - this.chartHeight - 50);
+            text(this.title, this.chartPosX + this.chartWidth / 2, this.chartPosY - this.chartHeight - this.padding);
         }
         pop();
     }
@@ -318,9 +337,9 @@ class BarChart {
         push();
         fill(this.axisTextColour);
         textAlign(CENTER, CENTER);
-        textSize(20);
+        textSize(this.axisTitleSize);
         textFont(this.customFont);
-        text(this.xAxisTitle, this.chartPosX + this.chartWidth / 2, this.chartPosY + 130);
+        text(this.xAxisTitle, this.chartPosX + this.chartWidth / 2, this.chartPosY + this.padding * 2);
         pop();
     }
 
@@ -328,12 +347,12 @@ class BarChart {
         push();
         fill(this.axisTextColour);
         textAlign(CENTER, CENTER);
-        textSize(20);
+        textSize(this.axisTitleSize);
         textFont(this.customFont);
         push();
-        translate(this.chartPosX, this.chartPosY);
+        translate(this.chartPosX - this.padding, this.chartPosY - this.chartHeight / 2);
         rotate(-90);
-        text(this.yAxisTitle, 0, -50);
+        text(this.yAxisTitle, 0, 0);
         pop();
         pop();
     }
