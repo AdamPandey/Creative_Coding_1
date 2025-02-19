@@ -329,9 +329,9 @@ class BarChart {
         textSize(this.titleSize);
         textFont(this.customFont);
         if (this.type === 'horizontal') {
-            text(this.title, this.chartPosX + this.chartWidth / 2, this.chartPosY - this.padding - 50);
+            text(this.title, this.chartPosX + this.chartWidth / 2, this.chartPosY - this.padding - 100);
         } else {
-            text(this.title, this.chartPosX + this.chartWidth / 2, this.chartPosY - this.chartHeight - this.padding);
+            text(this.title, this.chartPosX + this.chartWidth / 2, this.chartPosY - this.chartHeight - 2 * this.padding);
         }
         pop();
     }

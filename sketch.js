@@ -9,7 +9,7 @@ function preload() {
 }
 
 function setup() {
-    createCanvas(3000, 2000); 
+    createCanvas(3000, 3000); 
     angleMode(RADIANS);
     noLoop();
     cleanData();
@@ -28,6 +28,26 @@ function setup() {
         chartPosY: 200,
         customFont: customfont,
         title: "Horizontal Bar Chart - Domestic Box Office",
+        xAxisTitle: "Box Office (In Millions USD)",
+        yAxisTitle: "Movie Title",
+        barColours: [color(255, 215, 0)],
+        showAverageLine: true
+    }));
+
+    charts.push(new BarChart({
+        data: cleanedData,
+        xValue: "Title",
+        yValues: ["International"],
+        type: "horizontal",
+        chartHeight: 500,
+        chartWidth: 600,
+        barWidth: 40,
+        margin: 15,
+        axisThickness: 3,
+        chartPosX: 2000,
+        chartPosY: 1050,
+        customFont: customfont,
+        title: "Horizontal Bar Chart - International Box Office",
         xAxisTitle: "Box Office (In Millions USD)",
         yAxisTitle: "Movie Title",
         barColours: [color(255, 215, 0)],
