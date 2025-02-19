@@ -176,7 +176,11 @@ class BarChart {
                 textFont(this.customFont);
                 textAlign(CENTER, CENTER);
                 textSize(10);
-                text(this.data[i][this.xValue], xPos + this.barWidth / 2, 15);
+                push();
+                translate(xPos + this.barWidth / 2, 100);
+                rotate(-90);
+                text(this.data[i][this.xValue], 0, 0);
+                pop();
             }
         }
         pop();
