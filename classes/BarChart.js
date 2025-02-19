@@ -27,7 +27,7 @@ class BarChart {
         this.axisColor = options.axisColor || color(125);
         this.axisTextColour = options.axisTextColour || color(255, 255, 255);
 
-        // Average line options
+        
         this.showAverageLine = options.showAverageLine || false;
         this.averageLineColor = options.averageLineColor || color(255, 0, 0);
 
@@ -38,8 +38,11 @@ class BarChart {
         } else if (this.type === 'vertical') {
             this.gap = (this.chartWidth - (this.data.length * this.barWidth) - (this.margin * 2)) / (this.data.length - 1);
             this.scaler = this.chartHeight / (max(this.data.map(row => row[this.yValues[0]])) || 1);
+        } else if (this.type === 'stacked') {
+            this.gap = (this.chartWidth - (this.data.length * this.barWidth) - (this.margin * 2)) / (this.data.length - 1);
+            const maxTotal = max(this.data.map(row => this.yValues.reduce((sum, y) => sum + row[y], 0))); 
+            this.scaler = this.chartHeight / (maxTotal || 1);
         } else {
-            
             this.gap = 0;
             this.scaler = 1;
         }
@@ -62,17 +65,16 @@ class BarChart {
 
     renderVerticalBars() {
         push();
-        translate(this.margin, 0); 
+        translate(this.margin, 0);
         for (let i = 0; i < this.data.length; i++) {
             let xPos = (this.barWidth + this.gap) * i;
             let barHeight = this.data[i][this.yValues[0]] * this.scaler;
             fill(this.barColours[0]);
             noStroke();
-            rect(xPos, -barHeight, this.barWidth, barHeight); 
+            rect(xPos, -barHeight, this.barWidth, barHeight);
 
-            
             fill(255);
-            ellipse(xPos + this.barWidth / 2, -barHeight - 15, 30, 30); 
+            ellipse(xPos + this.barWidth / 2, -barHeight - 15, 30, 30);
             fill(0);
             textAlign(CENTER, CENTER);
             textSize(10);
@@ -103,7 +105,45 @@ class BarChart {
     }
 
     renderStackedBars() {
-        console.log("Stacked bars not implemented yet.");
+        push();
+        translate(this.margin, 0);
+        for (let i = 0; i < this.data.length; i++) {
+            let xPos = (this.barWidth + this.gap) * i;
+            let accumulatedHeight = 0;
+
+           
+            for (let j = 0; j < this.yValues.length; j++) {
+                let segmentHeight = this.data[i][this.yValues[j]] * this.scaler;
+                fill(this.barColours[j % this.barColours.length]); 
+                noStroke();
+                rect(xPos, -accumulatedHeight - segmentHeight, this.barWidth, segmentHeight);
+                accumulatedHeight += segmentHeight;
+
+                
+                if (this.type === 'stacked') {
+                    fill(255);
+                    ellipse(xPos + this.barWidth / 2, -accumulatedHeight - 15, 30, 30);
+                    fill(0);
+                    textAlign(CENTER, CENTER);
+                    textSize(10);
+                    textFont(this.customFont);
+                    text(this.data[i][this.yValues[j]], xPos + this.barWidth / 2, -accumulatedHeight - 15);
+                }
+            }
+
+           
+            if (this.type === 'stacked') {
+                let total = this.yValues.reduce((sum, y) => sum + this.data[i][y], 0);
+                fill(255);
+                ellipse(xPos + this.barWidth / 2, -accumulatedHeight - 15, 30, 30);
+                fill(0);
+                textAlign(CENTER, CENTER);
+                textSize(10);
+                textFont(this.customFont);
+                text(total, xPos + this.barWidth / 2, -accumulatedHeight - 15);
+            }
+        }
+        pop();
     }
 
     renderAxis() {
@@ -115,7 +155,7 @@ class BarChart {
         if (this.type === 'horizontal') {
             line(0, 0, this.chartWidth, 0);
             line(0, 0, 0, this.chartHeight);
-        } else if (this.type === 'vertical') {
+        } else if (this.type === 'vertical' || this.type === 'stacked') {
             line(0, 0, this.chartWidth, 0); // X-axis
             line(0, 0, 0, -this.chartHeight); // Y-axis
         }
@@ -142,8 +182,8 @@ class BarChart {
                     line(xPos, 0, xPos, this.tickLength);
                 }
             }
-        } else if (this.type === 'vertical') {
-            const maxValue = max(this.data.map(row => row[this.yValues[0]]));
+        } else if (this.type === 'vertical' || this.type === 'stacked') {
+            const maxValue = max(this.data.map(row => this.yValues.reduce((sum, y) => sum + row[y], 0)));
             const tickIncrement = 100;
             const maxTickValue = Math.ceil(maxValue / tickIncrement) * tickIncrement;
             const numTicks = Math.ceil(maxValue / tickIncrement);
@@ -170,7 +210,7 @@ class BarChart {
                 textAlign(RIGHT, CENTER);
                 textSize(10);
                 text(this.data[i][this.xValue], -this.tickLength - 5, yPos + this.barWidth / 2);
-            } else if (this.type === 'vertical') {
+            } else if (this.type === 'vertical' || this.type === 'stacked') {
                 let xPos = (this.barWidth + this.gap) * i;
                 fill(this.axisTextColour);
                 textFont(this.customFont);
@@ -210,8 +250,8 @@ class BarChart {
                     text(labelValue, xPos, this.tickLength + 15);
                 }
             }
-        } else if (this.type === 'vertical') {
-            const maxValue = max(this.data.map(row => row[this.yValues[0]]));
+        } else if (this.type === 'vertical' || this.type === 'stacked') {
+            const maxValue = max(this.data.map(row => this.yValues.reduce((sum, y) => sum + row[y], 0)));
             const tickIncrement = 100;
             const maxTickValue = Math.ceil(maxValue / tickIncrement) * tickIncrement;
             const numTicks = Math.ceil(maxValue / tickIncrement);
@@ -259,8 +299,8 @@ class BarChart {
                     line(xPos, 0, xPos, this.chartHeight);
                 }
             }
-        } else if (this.type === 'vertical') {
-            const maxValue = max(this.data.map(row => row[this.yValues[0]]));
+        } else if (this.type === 'vertical' || this.type === 'stacked') {
+            const maxValue = max(this.data.map(row => this.yValues.reduce((sum, y) => sum + row[y], 0)));
             const tickIncrement = 100;
             const maxTickValue = Math.ceil(maxValue / tickIncrement) * tickIncrement;
             const numTicks = Math.ceil(maxValue / tickIncrement);
@@ -309,7 +349,9 @@ class BarChart {
             if (this.type === 'horizontal') {
                 let xPos = average * this.scaler;
                 line(xPos, 0, xPos, this.chartHeight);
-            } else if (this.type === 'vertical') {
+            } else if (this.type === 'vertical' || this.type === 'stacked') {
+                let totalSum = this.data.reduce((sum, row) => sum + this.yValues.reduce((s, y) => s + row[y], 0), 0);
+                let average = totalSum / this.data.length;
                 let yPos = -average * this.scaler;
                 line(0, yPos, this.chartWidth, yPos);
             }
