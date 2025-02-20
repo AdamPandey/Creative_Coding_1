@@ -89,6 +89,11 @@ class BarChart {
         const sumX3 = xNorm.reduce((sum, xi) => sum + xi * xi * xi, 0);
         const sumX4 = xNorm.reduce((sum, xi) => sum + xi * xi * xi * xi, 0);
         const sumX2Y = xNorm.reduce((sum, xi, i) => sum + xi * xi * y[i], 0);
+
+        const D = n * sumX2 * sumX4 + 2 * sumX * sumX2 * sumX3 - sumX2 * sumX2 * sumX2 - n * sumX3 * sumX3 - sumX * sumX * sumX4;
+        const Da = sumY * sumX2 * sumX4 + sumX * sumX3 * sumX2Y + sumX2 * sumX3 * sumXY - sumX2 * sumX2 * sumX2Y - sumY * sumX3 * sumX3 - sumX * sumX4 * sumXY;
+        const Db = n * sumX2 * sumX2Y + sumY * sumX3 * sumX4 + sumX * sumX2 * sumXY - sumX2 * sumX2 * sumXY - n * sumX3 * sumX2Y - sumY * sumX * sumX4;
+        const Dc = n * sumX2 * sumX3 + sumX * sumX2 * sumY + sumX * sumX * sumX2Y - sumX2 * sumX2 * sumY - n * sumX * sumX3 - sumX * sumX2 * sumXY;
     }
 
 
