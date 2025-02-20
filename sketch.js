@@ -133,6 +133,25 @@ function setup() {
         barColours: [color(255, 215, 0), color(0, 191, 255)],
         showAverageLine: true
     }));
+
+    charts.push(new BarChart({
+        data: cleanedData,
+        xValue: "Year",
+        yValues: ["Domestic"],
+        type: "linearRegression",
+        chartHeight: 500,
+        chartWidth: 600,
+        margin: 15,
+        axisThickness: 3,
+        chartPosX: 200,
+        chartPosY: 2650,
+        customFont: customfont,
+        title: "Linear Regression - Domestic Box Office",
+        xAxisTitle: "Year",
+        yAxisTitle: "Box Office (In Millions USD)",
+        barColours: [color(255, 215, 0)],
+        showAverageLine: true
+    }));
 }
 
 function draw() {
