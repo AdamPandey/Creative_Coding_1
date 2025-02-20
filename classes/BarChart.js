@@ -323,7 +323,7 @@ class BarChart {
                 textAlign(RIGHT, CENTER);
                 textSize(this.labelSize);
                 text(displayTitle, -this.tickLength - 5, yPos + this.barWidth / 2);
-            }else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'percentStacked' || this.type === 'linearRegression') {
+            } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'percentStacked') {
                 let xPos = (this.barWidth + this.gap) * i;
                 fill(this.axisTextColour);
                 textFont(this.customFont);
@@ -331,6 +331,18 @@ class BarChart {
                 textSize(this.labelSize);
                 push();
                 translate(xPos + this.barWidth / 2, this.padding);
+                rotate(-PI/2);
+                text(displayTitle, 0, 0);
+                pop();
+            } else if (this.type === 'linearRegression') {
+                let xVal = parseFloat(this.data[i][this.xValue]);
+                let xPos = (xVal - this.xMin) * this.xScaler;
+                fill(this.axisTextColour);
+                textFont(this.customFont);
+                textAlign(CENTER, CENTER);
+                textSize(this.labelSize);
+                push();
+                translate(xPos, this.padding);
                 rotate(-PI/2);
                 text(displayTitle, 0, 0);
                 pop();
