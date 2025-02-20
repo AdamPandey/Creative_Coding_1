@@ -244,9 +244,9 @@ class BarChart {
                 line(-this.tickLength, yPos, 0, yPos);
             }
         } else if (this.type === 'percentStacked') {
-            const tickIncrement = 25; // 0%, 25%, 50%, 75%, 100%
+            const tickIncrement = 25;
             const numTicks = 4;
-            const scaler = this.chartHeight / 100; // 100% = chartHeight
+            const scaler = this.chartHeight / 100; 
 
             for (let i = 0; i <= numTicks; i++) {
                 let yPos = -i * tickIncrement * scaler;
@@ -323,7 +323,7 @@ class BarChart {
                 text(labelValue, -this.tickLength - this.padding / 2, yPos);
             }
         } else if (this.type === 'percentStacked') {
-            const tickIncrement = 25; // 0%, 25%, 50%, 75%, 100%
+            const tickIncrement = 25; 
             const numTicks = 4;
             const scaler = this.chartHeight / 100;
 
