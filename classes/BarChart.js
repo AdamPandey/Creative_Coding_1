@@ -94,6 +94,39 @@ class BarChart {
         const Da = sumY * sumX2 * sumX4 + sumX * sumX3 * sumX2Y + sumX2 * sumX3 * sumXY - sumX2 * sumX2 * sumX2Y - sumY * sumX3 * sumX3 - sumX * sumX4 * sumXY;
         const Db = n * sumX2 * sumX2Y + sumY * sumX3 * sumX4 + sumX * sumX2 * sumXY - sumX2 * sumX2 * sumXY - n * sumX3 * sumX2Y - sumY * sumX * sumX4;
         const Dc = n * sumX2 * sumX3 + sumX * sumX2 * sumY + sumX * sumX * sumX2Y - sumX2 * sumX2 * sumY - n * sumX * sumX3 - sumX * sumX2 * sumXY;
+
+        this.aNorm = Da / D;
+        this.bNorm = Db / D;
+        this.cNorm = Dc / D;
+
+        const scale = xMax - xMin;
+        this.a = this.aNorm / (scale * scale);
+        this.b = (this.bNorm - 2 * this.aNorm * xMin) / scale;
+        this.c = this.cNorm - this.aNorm * xMin * xMin / (scale * scale) - this.bNorm * xMin / scale;
+    }
+
+    renderQuadraticRegressionPoints() {
+        push();
+        translate(this.margin, 0);
+
+        
+        for (let i = 0; i < this.data.length; i++) {
+            let xVal = parseFloat(this.data[i][this.xValue]);
+            let yVal = this.data[i][this.yValues[0]];
+            let xPos = (xVal - this.xMin) * this.xScaler;
+            let yPos = Math.min(yVal * this.yScaler, this.chartHeight);
+            fill(this.barColours[0]);
+            noStroke();
+            ellipse(xPos, -yPos, 10, 10); 
+
+            fill(255);
+            textAlign(CENTER, CENTER);
+            textSize(this.labelSize);
+            textFont(this.customFont);
+            text(yVal, xPos, -yPos - this.padding / 2); 
+        }
+
+        pop();
     }
 
 
