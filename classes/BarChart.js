@@ -82,7 +82,13 @@ class BarChart {
         const xMax = max(x);
         const xNorm = x.map(xi => (xi - xMin) / (xMax - xMin));
 
-        
+        const sumX = xNorm.reduce((sum, val) => sum + val, 0);
+        const sumY = y.reduce((sum, val) => sum + val, 0);
+        const sumXY = xNorm.reduce((sum, xi, i) => sum + xi * y[i], 0);
+        const sumX2 = xNorm.reduce((sum, xi) => sum + xi * xi, 0);
+        const sumX3 = xNorm.reduce((sum, xi) => sum + xi * xi * xi, 0);
+        const sumX4 = xNorm.reduce((sum, xi) => sum + xi * xi * xi * xi, 0);
+        const sumX2Y = xNorm.reduce((sum, xi, i) => sum + xi * xi * y[i], 0);
     }
 
 
