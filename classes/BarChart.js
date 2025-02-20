@@ -72,6 +72,20 @@ class BarChart {
         };
     }
 
+    calculateQuadraticRegression() {
+        const x = this.data.map(row => parseFloat(row[this.xValue])); 
+        const y = this.data.map(row => parseFloat(row[this.yValues[0]]));
+        const n = x.length;
+
+        
+        const xMin = min(x);
+        const xMax = max(x);
+        const xNorm = x.map(xi => (xi - xMin) / (xMax - xMin));
+
+        
+    }
+
+
     renderBars() {
         push();
         translate(this.chartPosX, this.chartPosY);
