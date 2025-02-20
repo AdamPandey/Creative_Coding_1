@@ -226,6 +226,15 @@ class BarChart {
             textFont(this.customFont);
             text(yVal, xPos, -yPos - this.padding / 2);
         }
+        stroke(255, 0, 0);
+        strokeWeight(2);
+        const xActualMin = min(this.data.map(row => parseFloat(row[this.xValue])));
+        const xActualMax = max(this.data.map(row => parseFloat(row[this.xValue])));
+        let yStart = this.m * xActualMin + this.b;
+        let yEnd = this.m * xActualMax + this.b;
+        let yPosStart = constrain(yStart * this.yScaler, 0, this.chartHeight);
+        let yPosEnd = constrain(yEnd * this.yScaler, 0, this.chartHeight);
+        line(0, -yPosStart, this.chartWidth - 2 * this.margin, -yPosEnd);
         pop();
     }
 
@@ -238,7 +247,7 @@ class BarChart {
         if (this.type === 'horizontal') {
             line(0, 0, this.chartWidth, 0);
             line(0, 0, 0, this.chartHeight);
-        } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'percentStacked') {
+        } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'percentStacked' || this.type === 'linearRegression') {
             line(0, 0, this.chartWidth, 0); // X-axis
             line(0, 0, 0, -this.chartHeight); // Y-axis
         }
@@ -276,7 +285,18 @@ class BarChart {
                 let yPos = -i * tickIncrement * scaler;
                 line(-this.tickLength, yPos, 0, yPos);
             }
-        } else if (this.type === 'percentStacked') {
+        } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'linearRegression') {
+            const maxValue = max(this.data.map(row => this.yValues.reduce((sum, y) => sum + row[y], 0)));
+            const tickIncrement = 100;
+            const maxTickValue = Math.ceil(maxValue / tickIncrement) * tickIncrement;
+            const numTicks = Math.ceil(maxValue / tickIncrement);
+            const scaler = this.chartHeight / maxTickValue;
+
+            for (let i = 0; i <= numTicks; i++) {
+                let yPos = -i * tickIncrement * scaler;
+                line(-this.tickLength, yPos, 0, yPos);
+            }
+        }else if (this.type === 'percentStacked') {
             const tickIncrement = 25;
             const numTicks = 4;
             const scaler = this.chartHeight / 100; 
@@ -303,7 +323,7 @@ class BarChart {
                 textAlign(RIGHT, CENTER);
                 textSize(this.labelSize);
                 text(displayTitle, -this.tickLength - 5, yPos + this.barWidth / 2);
-            } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'percentStacked') {
+            }else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'percentStacked' || this.type === 'linearRegression') {
                 let xPos = (this.barWidth + this.gap) * i;
                 fill(this.axisTextColour);
                 textFont(this.customFont);
@@ -343,7 +363,7 @@ class BarChart {
                     text(labelValue, xPos, this.tickLength + this.padding / 2);
                 }
             }
-        } else if (this.type === 'vertical' || this.type === 'stacked') {
+        } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'linearRegression') {
             const maxValue = max(this.data.map(row => this.yValues.reduce((sum, y) => sum + row[y], 0)));
             const tickIncrement = 100;
             const maxTickValue = Math.ceil(maxValue / tickIncrement) * tickIncrement;
@@ -413,7 +433,18 @@ class BarChart {
                 const yPos = -i * tickIncrement * scaler;
                 line(0, yPos, this.chartWidth, yPos);
             }
-        } else if (this.type === 'percentStacked') {
+        } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'linearRegression') {
+            const maxValue = max(this.data.map(row => this.yValues.reduce((sum, y) => sum + row[y], 0)));
+            const tickIncrement = 100;
+            const maxTickValue = Math.ceil(maxValue / tickIncrement) * tickIncrement;
+            const numTicks = Math.ceil(maxValue / tickIncrement);
+            const scaler = this.chartHeight / maxTickValue;
+
+            for (let i = 0; i <= numTicks; i++) {
+                const yPos = -i * tickIncrement * scaler;
+                line(0, yPos, this.chartWidth, yPos);
+            }
+        }else if (this.type === 'percentStacked') {
             const tickIncrement = 25;
             const numTicks = 4;
             const scaler = this.chartHeight / 100;
@@ -469,7 +500,7 @@ class BarChart {
             if (this.type === 'horizontal') {
                 let xPos = average * this.scaler;
                 line(xPos, 0, xPos, this.chartHeight);
-            } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'percentStacked') {
+            } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'percentStacked' || this.type === 'linearRegression') {
                 let totalSum = this.data.reduce((sum, row) => sum + this.yValues.reduce((s, y) => s + row[y], 0), 0);
                 let average = totalSum / this.data.length;
                 let yPos = this.type === 'percentStacked' ? 
