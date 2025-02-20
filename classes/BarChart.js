@@ -51,6 +51,15 @@ class BarChart {
         } else if (this.type === 'percentStacked') {
             this.gap = (this.chartWidth - (this.data.length * this.barWidth) - (this.margin * 2)) / (this.data.length - 1);
             this.scaler = this.chartHeight;
+        } else if (this.type === 'linearRegression') {
+            this.gap = 0;
+            const maxY = max(this.data.map(row => row[this.yValues[0]]));
+            this.yScaler = this.chartHeight / (maxY || 1);
+            const xMin = min(this.data.map(row => parseFloat(row[this.xValue])));
+            const xMax = max(this.data.map(row => parseFloat(row[this.xValue])));
+            this.xScaler = (this.chartWidth - 2 * this.margin) / (xMax - xMin || 1);
+            this.xMin = xMin;
+            this.calculateLinearRegression();
         } else {
             this.gap = 0;
             this.scaler = 1;
