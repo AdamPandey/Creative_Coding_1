@@ -81,7 +81,20 @@ class BarChart {
         };
     }
 
+    calculateLinearRegression() {
+        const x = this.data.map(row => parseFloat(row[this.xValue])); // e.g., Year
+        const y = this.data.map(row => parseFloat(row[this.yValues[0]])); // e.g., Domestic
+        const n = x.length;
 
+        const sumX = x.reduce((sum, val) => sum + val, 0);
+        const sumY = y.reduce((sum, val) => sum + val, 0);
+        const sumXY = x.reduce((sum, xi, i) => sum + xi * y[i], 0);
+        const sumX2 = x.reduce((sum, xi) => sum + xi * xi, 0);
+
+        // Slope (m) and intercept (b)
+        this.m = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+        this.b = (sumY - this.m * sumX) / n;
+    }
 
     renderBars() {
         push();
