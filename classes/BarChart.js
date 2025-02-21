@@ -443,7 +443,7 @@ class BarChart {
         if (this.type === 'horizontal') {
             text(this.title, this.chartPosX + this.chartWidth / 2, this.chartPosY - 2 * this.padding - 50);
         } else if (this.type === 'spider') {
-            text(this.title, this.chartPosX + this.chartWidth / 2, this.chartPosY - this.chartHeight / 2 - this.padding); 
+            text(this.title, this.chartPosX + this.chartWidth / 2, this.chartPosY - this.chartHeight / 2 + 200); 
         } else {
             text(this.title, this.chartPosX + this.chartWidth / 2, this.chartPosY - this.chartHeight - 2 * this.padding);
         }
@@ -501,6 +501,8 @@ class BarChart {
         textFont(this.customFont);
         if (this.type === 'horizontal') {
             text(this.xAxisTitle, this.chartPosX + this.chartWidth / 2, this.chartPosY - 30);
+        } else if (this.type === 'spider') {
+            text(this.xAxisTitleitle, this.chartPosX + this.chartWidth / 2, this.chartPosY - this.chartHeight / 2 + 200); 
         } else {
             text(this.xAxisTitle, this.chartPosX + this.chartWidth / 2, this.chartPosY + this.padding * 2);
         }
