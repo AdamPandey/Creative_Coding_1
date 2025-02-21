@@ -152,6 +152,25 @@ function setup() {
         barColours: [color(255, 215, 0)],
         showAverageLine: true
     }));
+
+    charts.push(new BarChart({
+        data: cleanedData,
+        xValue: "Title",
+        yValues: ["Domestic", "International"],
+        type: "spider",
+        chartHeight: 500,
+        chartWidth: 600,
+        margin: 15,
+        axisThickness: 3,
+        chartPosX: 1400, 
+        chartPosY: 2000,
+        customFont: customfont,
+        title: "Spider Plot - Box Office",
+        xAxisTitle: "Movies",
+        yAxisTitle: "Box Office (In Millions USD)",
+        barColours: [color(255, 215, 0), color(0, 191, 255)], 
+        showAverageLine: false
+    }));
 }
 
 function draw() {
