@@ -9,7 +9,7 @@ function preload() {
 }
 
 function setup() {
-    createCanvas(3000, 3000); 
+    createCanvas(5000, 4000); 
     angleMode(RADIANS);
     noLoop();
     cleanData();
