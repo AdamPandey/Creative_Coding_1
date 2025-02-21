@@ -247,6 +247,36 @@ class BarChart {
         pop();
     }
 
+    renderSpiderPlot() {
+        push();
+        translate(this.chartWidth / 2, this.chartHeight / 2);
+
+        
+        const radius = min(this.chartWidth, this.chartHeight) / 2 - this.padding;
+        const angleStep = TWO_PI / this.data.length;
+
+        for (let i = 0; i < this.data.length; i++) {
+            let angle = i * angleStep;
+            let x = cos(angle) * radius;
+            let y = sin(angle) * radius;
+            stroke(this.axisColor);
+            strokeWeight(this.axisThickness);
+            line(0, 0, x, y);
+
+            
+            let labelX = cos(angle) * (radius + this.padding / 2);
+            let labelY = sin(angle) * (radius + this.padding / 2);
+            fill(this.axisTextColour);
+            noStroke();
+            textAlign(CENTER, CENTER);
+            textSize(this.labelSize);
+            textFont(this.customFont);
+            let displayTitle = this.titleAbbreviations[this.data[i][this.xValue]] || this.data[i][this.xValue];
+            text(displayTitle, labelX, labelY);
+        }
+
+    }
+
     renderAxis() {
         push();
         translate(this.chartPosX, this.chartPosY);
