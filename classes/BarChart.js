@@ -513,9 +513,7 @@ class BarChart {
         textFont(this.customFont);
         if (this.type === 'horizontal') {
             text(this.xAxisTitle, this.chartPosX + this.chartWidth / 2, this.chartPosY - 30);
-        } else if (this.type === 'spider') {
-            text(this.xAxisTitleitle, this.chartPosX + this.chartWidth / 2, this.chartPosY); 
-        } else {
+        } else if (this.type !== 'spider') {
             text(this.xAxisTitle, this.chartPosX + this.chartWidth / 2, this.chartPosY + this.padding * 2);
         }
         pop();
@@ -531,12 +529,14 @@ class BarChart {
         if (this.type === 'horizontal') {
             translate(this.chartPosX - 100, this.chartPosY + 190);
         } else if (this.type === 'spider') {
-            translate(this.chartPosX - this.padding, this.chartPosY + 250);
+            // Do nothing for spider plot
         } else {
             translate(this.chartPosX - 100, this.chartPosY - this.chartHeight / 2);
         }
-        rotate(-PI/2);
-        text(this.yAxisTitle, 0, 0);
+        if (this.type !== 'spider') {
+            rotate(-PI/2);
+            text(this.yAxisTitle, 0, 0);
+        }
         pop();
         pop();
     }
