@@ -275,6 +275,23 @@ class BarChart {
             text(displayTitle, labelX, labelY);
         }
 
+        for (let j = 0; j < this.yValues.length; j++) {
+            stroke(this.barColours[j % this.barColours.length]);
+            strokeWeight(2);
+            noFill();
+            beginShape();
+            for (let i = 0; i < this.data.length; i++) {
+                let angle = i * angleStep;
+                let value = this.data[i][this.yValues[j]];
+                let r = min(value * this.scaler, radius);
+                let x = cos(angle) * r;
+                let y = sin(angle) * r;
+                vertex(x, y);
+            }
+            endShape(CLOSE);
+        }
+
+        pop();
     }
 
     renderAxis() {
