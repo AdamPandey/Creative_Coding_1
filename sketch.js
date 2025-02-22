@@ -11,7 +11,7 @@ function preload() {
 }
 
 function setup() {
-    createCanvas(5000, 4000);
+    createCanvas(1920, 1080);
     angleMode(RADIANS);
     
     cleanData();
@@ -50,24 +50,30 @@ function drawMenu() {
 }
 
 function drawVisualization() {
-    
     charts[currentChartIndex].render();
 
-    
-    let buttonWidth = 150;
-    let buttonHeight = 60;
-    let buttonX = width - buttonWidth - 50; 
-    let buttonY = height - buttonHeight - 50;
-
-    fill(255, 215, 0); 
-    rect(buttonX, buttonY, buttonWidth, buttonHeight, 20);
+    // Next button
+    let nextButtonWidth = 150;
+    let nextButtonHeight = 60;
+    let nextButtonX = width - nextButtonWidth - 50;
+    let nextButtonY = height - nextButtonHeight - 50;
+    fill(255, 215, 0);
+    rect(nextButtonX, nextButtonY, nextButtonWidth, nextButtonHeight, 20);
     fill(0);
     textSize(24);
     textAlign(CENTER, CENTER);
-    textFont(customfont);
-    text("Next", buttonX + buttonWidth / 2, buttonY + buttonHeight / 2);
+    text("Next", nextButtonX + nextButtonWidth / 2, nextButtonY + nextButtonHeight / 2);
 
-    
+    // Previous button
+    let prevButtonWidth = 150;
+    let prevButtonHeight = 60;
+    let prevButtonX = width - nextButtonWidth - prevButtonWidth - 100;
+    let prevButtonY = height - prevButtonHeight - 50;
+    fill(255, 215, 0);
+    rect(prevButtonX, prevButtonY, prevButtonWidth, prevButtonHeight, 20);
+    fill(0);
+    text("Previous", prevButtonX + prevButtonWidth / 2, prevButtonY + prevButtonHeight / 2);
+
     fill(255);
     textSize(20);
     textAlign(LEFT, TOP);
@@ -165,8 +171,8 @@ function setupCharts() {
         barWidth: 40,
         margin: 15,
         axisThickness: 3,
-        chartPosX: 1050,
-        chartPosY: 200,
+        chartPosX: 800,
+        chartPosY: 700,
         customFont: customfont,
         title: "Vertical Bar Chart - Domestic Box Office",
         xAxisTitle: "Movie Title",
@@ -185,8 +191,8 @@ function setupCharts() {
         barWidth: 40,
         margin: 15,
         axisThickness: 3,
-        chartPosX: 1050,
-        chartPosY: 200,
+        chartPosX: 800,
+        chartPosY: 700,
         customFont: customfont,
         title: "Vertical Bar Chart - International Box Office",
         xAxisTitle: "Movie Title",
@@ -205,8 +211,8 @@ function setupCharts() {
         barWidth: 40,
         margin: 15,
         axisThickness: 3,
-        chartPosX: 1050,
-        chartPosY: 200,
+        chartPosX: 800,
+        chartPosY: 700,
         customFont: customfont,
         title: "Stacked Bar Chart - Box Office",
         xAxisTitle: "Movie Title",
@@ -225,8 +231,8 @@ function setupCharts() {
         barWidth: 40,
         margin: 15,
         axisThickness: 3,
-        chartPosX: 1050,
-        chartPosY: 200,
+        chartPosX: 800,
+        chartPosY: 700,
         customFont: customfont,
         title: "100% Stacked Bar Chart - Box Office",
         xAxisTitle: "Movie Title",
@@ -240,12 +246,12 @@ function setupCharts() {
         xValue: "Year",
         yValues: ["Domestic"],
         type: "linearRegression",
-        chartHeight: 500,
+        chartHeight: 600,
         chartWidth: 600,
         margin: 15,
         axisThickness: 3,
-        chartPosX: 1050,
-        chartPosY: 200,
+        chartPosX: 800,
+        chartPosY: 900,
         customFont: customfont,
         title: "Linear Regression - Domestic Box Office",
         xAxisTitle: "Year",
@@ -263,8 +269,8 @@ function setupCharts() {
         chartWidth: 600,
         margin: 15,
         axisThickness: 3,
-        chartPosX: 1050,
-        chartPosY: 200,
+        chartPosX: 800,
+        chartPosY: 300,
         customFont: customfont,
         title: "Spider Plot - Box Office",
         xAxisTitle: "Movies",
