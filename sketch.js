@@ -28,6 +28,26 @@ function draw() {
     }
 }
 
+function drawMenu() {
+    
+    fill(255);
+    textAlign(CENTER, CENTER);
+    textSize(50);
+    textFont(customfont);
+    text("Batman Box Office Visualizations", width / 2, height / 2 - 100);
+
+    
+    let buttonWidth = 300;
+    let buttonHeight = 80;
+    let buttonX = width / 2 - buttonWidth / 2;
+    let buttonY = height / 2;
+
+    fill(255, 215, 0); 
+    rect(buttonX, buttonY, buttonWidth, buttonHeight, 20); 
+    fill(0);
+    textSize(30);
+    text("Start Visualization", buttonX + buttonWidth / 2, buttonY + buttonHeight / 2);
+}
 
 function cleanData() {
     for (let i = 0; i < data.rows.length; i++) {
