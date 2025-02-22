@@ -82,27 +82,32 @@ function drawVisualization() {
 
 function mousePressed() {
     if (state === "menu") {
-        
         let buttonWidth = 300;
         let buttonHeight = 80;
         let buttonX = width / 2 - buttonWidth / 2;
         let buttonY = height / 2;
-
         if (mouseX >= buttonX && mouseX <= buttonX + buttonWidth &&
             mouseY >= buttonY && mouseY <= buttonY + buttonHeight) {
             state = "visualization";
-            currentChartIndex = 0; 
+            currentChartIndex = 0;
         }
     } else if (state === "visualization") {
-        
-        let buttonWidth = 150;
-        let buttonHeight = 60;
-        let buttonX = width - buttonWidth - 50;
-        let buttonY = height - buttonHeight - 50;
+        let nextButtonWidth = 150;
+        let nextButtonHeight = 60;
+        let nextButtonX = width - nextButtonWidth - 50;
+        let nextButtonY = height - nextButtonHeight - 50;
+        if (mouseX >= nextButtonX && mouseX <= nextButtonX + nextButtonWidth &&
+            mouseY >= nextButtonY && mouseY <= nextButtonY + nextButtonHeight) {
+            currentChartIndex = (currentChartIndex + 1) % charts.length;
+        }
 
-        if (mouseX >= buttonX && mouseX <= buttonX + buttonWidth &&
-            mouseY >= buttonY && mouseY <= buttonY + buttonHeight) {
-            currentChartIndex = (currentChartIndex + 1) % charts.length; 
+        let prevButtonWidth = 150;
+        let prevButtonHeight = 60;
+        let prevButtonX = width - nextButtonWidth - prevButtonWidth - 100;
+        let prevButtonY = height - prevButtonHeight - 50;
+        if (mouseX >= prevButtonX && mouseX <= prevButtonX + prevButtonWidth &&
+            mouseY >= prevButtonY && mouseY <= prevButtonY + prevButtonHeight) {
+            currentChartIndex = (currentChartIndex - 1 + charts.length) % charts.length;
         }
     }
 }
