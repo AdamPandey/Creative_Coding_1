@@ -49,6 +49,33 @@ function drawMenu() {
     text("Start Visualization", buttonX + buttonWidth / 2, buttonY + buttonHeight / 2);
 }
 
+function mousePressed() {
+    if (state === "menu") {
+        
+        let buttonWidth = 300;
+        let buttonHeight = 80;
+        let buttonX = width / 2 - buttonWidth / 2;
+        let buttonY = height / 2;
+
+        if (mouseX >= buttonX && mouseX <= buttonX + buttonWidth &&
+            mouseY >= buttonY && mouseY <= buttonY + buttonHeight) {
+            state = "visualization";
+            currentChartIndex = 0; 
+        }
+    } else if (state === "visualization") {
+        
+        let buttonWidth = 150;
+        let buttonHeight = 60;
+        let buttonX = width - buttonWidth - 50;
+        let buttonY = height - buttonHeight - 50;
+
+        if (mouseX >= buttonX && mouseX <= buttonX + buttonWidth &&
+            mouseY >= buttonY && mouseY <= buttonY + buttonHeight) {
+            currentChartIndex = (currentChartIndex + 1) % charts.length; 
+        }
+    }
+}
+
 function cleanData() {
     for (let i = 0; i < data.rows.length; i++) {
         cleanedData.push(data.rows[i].obj);
