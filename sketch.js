@@ -49,6 +49,31 @@ function drawMenu() {
     text("Start Visualization", buttonX + buttonWidth / 2, buttonY + buttonHeight / 2);
 }
 
+function drawVisualization() {
+    
+    charts[currentChartIndex].render();
+
+    
+    let buttonWidth = 150;
+    let buttonHeight = 60;
+    let buttonX = width - buttonWidth - 50; 
+    let buttonY = height - buttonHeight - 50;
+
+    fill(255, 215, 0); 
+    rect(buttonX, buttonY, buttonWidth, buttonHeight, 20);
+    fill(0);
+    textSize(24);
+    textAlign(CENTER, CENTER);
+    textFont(customfont);
+    text("Next", buttonX + buttonWidth / 2, buttonY + buttonHeight / 2);
+
+    
+    fill(255);
+    textSize(20);
+    textAlign(LEFT, TOP);
+    text(`Chart ${currentChartIndex + 1} of ${charts.length}`, 50, 50);
+}
+
 function mousePressed() {
     if (state === "menu") {
         
