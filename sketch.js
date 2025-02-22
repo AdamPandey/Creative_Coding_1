@@ -34,10 +34,10 @@ function drawMenu() {
     textAlign(CENTER, CENTER);
     textSize(50);
     textFont(customfont);
-    text("Batman Box Office Visualizations", width / 2, height / 2 - 100);
+    text("The Batman Experience", width / 2, height / 2 - 100);
 
     
-    let buttonWidth = 300;
+    let buttonWidth = 500;
     let buttonHeight = 80;
     let buttonX = width / 2 - buttonWidth / 2;
     let buttonY = height / 2;
@@ -46,7 +46,7 @@ function drawMenu() {
     rect(buttonX, buttonY, buttonWidth, buttonHeight, 20); 
     fill(0);
     textSize(30);
-    text("Start Visualization", buttonX + buttonWidth / 2, buttonY + buttonHeight / 2);
+    text("Start Visualization Experience", buttonX + buttonWidth / 2, buttonY + buttonHeight / 2);
 }
 
 function drawVisualization() {
