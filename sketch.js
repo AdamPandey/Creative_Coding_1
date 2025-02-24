@@ -6,13 +6,14 @@ let batmanFont;
 let state = "menu";
 let currentChartIndex = 0;
 let batmanImg;
-let song; 
-let isMuted = false; 
-let video; 
+let song;
+let isMuted = false;
+let video;
+let isVideoPlaying = false; 
 
 function preload() {
     try {
-        // Debug file paths
+        
         console.log("Attempting to load Combined.csv from:", 'data/Combined.csv');
         data = loadTable('data/Combined.csv', 'csv', 'header');
         
@@ -25,7 +26,7 @@ function preload() {
         console.log("Attempting to load batman_theme.mp3 from:", 'assets/batman_theme.mp3');
         song = loadSound('assets/batman_theme.mp3');
         
-        console.log("Attempting to load batman_video.mp4 from:", 'assets/batman_video.mp4');
+        console.log("Attempting to load batman_video.mp4 from:", 'assets/batman_video.gif');
         video = createVideo('assets/batman_video.mp4'); 
         
         console.log("Attempting to load BatmanForeverAlternate.ttf from:", 'assets/BatmanForeverAlternate.ttf');
@@ -44,8 +45,6 @@ function setup() {
     cleanData();
     setupCharts();
 
-    
-    video.loop();
     video.hide();
 }
 
@@ -60,28 +59,41 @@ function draw() {
 }
 
 function drawMenu() {
-    
-    image(video, 0, 0, width, height);
+    if (isVideoPlaying && video && video.elt && video.elt.readyState >= 2) {
+        image(video, 0, 0, width, height);
+    } else {
+        background(0, 38, 77); // Fallback background if video isn’t playing or loaded
+    }
 
-    
     fill(255);
     textAlign(CENTER, CENTER);
-    textSize(80); 
-    textFont(batmanFont || 'Arial'); 
-    text("Batman Box Office Visualizations", width / 2, height / 2 - 100);
+    textSize(80);
+    textFont(batmanFont || 'Arial');
+    text("Batman Box Office Visualizations", width / 2, height / 2 - 150);
 
-    
-    let buttonWidth = 300;
-    let buttonHeight = 80;
-    let buttonX = width / 2 - buttonWidth / 2;
-    let buttonY = height / 2;
+    let playButtonWidth = 200;
+    let playButtonHeight = 60;
+    let playButtonX = width / 2 - playButtonWidth / 2;
+    let playButtonY = height / 2 + 50;
 
-    fill(255, 215, 0); 
-    rect(buttonX, buttonY, buttonWidth, buttonHeight, 20);
+    let startButtonWidth = 300;
+    let startButtonHeight = 80;
+    let startButtonX = width / 2 - startButtonWidth / 2;
+    let startButtonY = height / 2 + 150;
+
+    fill(255, 215, 0);
+    rect(playButtonX, playButtonY, playButtonWidth, playButtonHeight, 20);
+    fill(0);
+    textSize(24);
+    textFont(customfont || 'Arial');
+    text("Early Easter?", playButtonX + playButtonWidth / 2, playButtonY + playButtonHeight / 2);
+
+    fill(255, 215, 0);
+    rect(startButtonX, startButtonY, startButtonWidth, startButtonHeight, 20);
     fill(0);
     textSize(30);
     textFont(customfont || 'Arial');
-    text("Start Visualization", buttonX + buttonWidth / 2, buttonY + buttonHeight / 2);
+    text("Start Visualization", startButtonX + startButtonWidth / 2, startButtonY + startButtonHeight / 2);
 }
 
 function drawVisualization() {
@@ -204,12 +216,28 @@ function getBatmanCommentary() {
 
 function mousePressed() {
     if (state === "menu") {
-        let buttonWidth = 300;
-        let buttonHeight = 80;
-        let buttonX = width / 2 - buttonWidth / 2;
-        let buttonY = height / 2;
-        if (mouseX >= buttonX && mouseX <= buttonX + buttonWidth &&
-            mouseY >= buttonY && mouseY <= buttonY + buttonHeight) {
+        let playButtonWidth = 200;
+        let playButtonHeight = 60;
+        let playButtonX = width / 2 - playButtonWidth / 2;
+        let playButtonY = height / 2 + 50;
+
+        let startButtonWidth = 300;
+        let startButtonHeight = 80;
+        let startButtonX = width / 2 - startButtonWidth / 2;
+        let startButtonY = height / 2 + 150;
+
+        if (mouseX >= playButtonX && mouseX <= playButtonX + playButtonWidth &&
+            mouseY >= playButtonY && mouseY <= playButtonY + playButtonHeight) {
+            if (video) {
+                video.play();
+                video.loop();
+                video.volume(0);
+                isVideoPlaying = true;
+            }
+        }
+
+        if (mouseX >= startButtonX && mouseX <= startButtonX + startButtonWidth &&
+            mouseY >= startButtonY && mouseY <= startButtonY + startButtonHeight) {
             state = "visualization";
             currentChartIndex = 0;
         }
@@ -221,7 +249,7 @@ function mousePressed() {
         if (mouseX >= nextButtonX && mouseX <= nextButtonX + nextButtonWidth &&
             mouseY >= nextButtonY && mouseY <= nextButtonY + nextButtonHeight) {
             currentChartIndex = (currentChartIndex + 1) % charts.length;
-            charts[currentChartIndex].animationProgress = 0; 
+            charts[currentChartIndex].animationProgress = 0;
         }
 
         let prevButtonWidth = 150;
@@ -231,23 +259,22 @@ function mousePressed() {
         if (mouseX >= prevButtonX && mouseX <= prevButtonX + prevButtonWidth &&
             mouseY >= prevButtonY && mouseY <= prevButtonY + prevButtonHeight) {
             currentChartIndex = (currentChartIndex - 1 + charts.length) % charts.length;
-            charts[currentChartIndex].animationProgress = 0; 
+            charts[currentChartIndex].animationProgress = 0;
         }
 
-        
         let muteButtonWidth = 200;
         let muteButtonHeight = 60;
         let muteButtonX = width / 2 - muteButtonWidth / 2;
         let muteButtonY = height - muteButtonHeight - 50;
         if (mouseX >= muteButtonX && mouseX <= muteButtonX + muteButtonWidth &&
             mouseY >= muteButtonY && mouseY <= muteButtonY + muteButtonHeight) {
-            isMuted = !isMuted; 
+            isMuted = !isMuted;
             if (song) {
-                song.setVolume(isMuted ? 0 : 0.5); 
+                song.setVolume(isMuted ? 0 : 0.5);
             }
         }
     }
-    getAudioContext().resume(); 
+    getAudioContext().resume();
 }
 
 function cleanData() {
