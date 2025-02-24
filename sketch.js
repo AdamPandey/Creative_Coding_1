@@ -2,15 +2,17 @@ let data;
 let cleanedData = [];
 let charts = [];
 let customfont;
+let batmanFont;
 let state = "menu";
 let currentChartIndex = 0;
 let batmanImg;
-let song;
+let song; 
 let isMuted = false; 
+let video; 
 
 function preload() {
     try {
-        
+        // Debug file paths
         console.log("Attempting to load Combined.csv from:", 'data/Combined.csv');
         data = loadTable('data/Combined.csv', 'csv', 'header');
         
@@ -23,7 +25,13 @@ function preload() {
         console.log("Attempting to load batman_theme.mp3 from:", 'assets/batman_theme.mp3');
         song = loadSound('assets/batman_theme.mp3');
         
-        console.log("Preload complete. Font:", customfont, "Batman image:", batmanImg, "Song:", song, "Data:", data);
+        console.log("Attempting to load batman_video.mp4 from:", 'assets/batman_video.mp4');
+        video = createVideo('assets/batman_video.mp4'); 
+        
+        console.log("Attempting to load BatmanForeverAlternate.ttf from:", 'assets/BatmanForeverAlternate.ttf');
+        batmanFont = loadFont('assets/batmfa__.ttf');
+        
+        console.log("Preload complete. Font:", customfont, "Batman image:", batmanImg, "Song:", song, "Video:", video, "Batman Font:", batmanFont, "Data:", data);
     } catch (error) {
         console.error("Preload error:", error);
     }
@@ -31,9 +39,14 @@ function preload() {
 
 function setup() {
     createCanvas(2000, 1500); 
+    console.log("Canvas size:", width, height);
     angleMode(RADIANS);
     cleanData();
     setupCharts();
+
+    
+    video.loop();
+    video.hide();
 }
 
 function draw() {
@@ -48,10 +61,13 @@ function draw() {
 
 function drawMenu() {
     
+    image(video, 0, 0, width, height);
+
+    
     fill(255);
     textAlign(CENTER, CENTER);
-    textSize(50);
-    textFont(customfont);
+    textSize(80); 
+    textFont(batmanFont || 'Arial'); 
     text("Batman Box Office Visualizations", width / 2, height / 2 - 100);
 
     
@@ -64,14 +80,13 @@ function drawMenu() {
     rect(buttonX, buttonY, buttonWidth, buttonHeight, 20);
     fill(0);
     textSize(30);
+    textFont(customfont || 'Arial');
     text("Start Visualization", buttonX + buttonWidth / 2, buttonY + buttonHeight / 2);
 }
 
 function drawVisualization() {
-    
     charts[currentChartIndex].render();
 
-    
     if (charts[currentChartIndex].animationProgress < 1) {
         let animationSpeed = 0.03; 
         charts[currentChartIndex].animationProgress = min(charts[currentChartIndex].animationProgress + animationSpeed, 1);
@@ -79,8 +94,8 @@ function drawVisualization() {
 
     
     let batmanWidth = 400; 
-    let batmanHeight = 600;
-    let batmanX = 50;
+    let batmanHeight = 600; 
+    let batmanX = 50; 
     let batmanY = height - batmanHeight - 100; 
     if (batmanImg && batmanImg.width > 1 && batmanImg.height > 1) { 
         image(batmanImg, batmanX, batmanY, batmanWidth, batmanHeight);
@@ -97,43 +112,46 @@ function drawVisualization() {
     let nextButtonWidth = 150;
     let nextButtonHeight = 60;
     let nextButtonX = width - nextButtonWidth - 50;
-    let nextButtonY = 150; 
+    let nextButtonY = 150;
 
     let prevButtonWidth = 150;
     let prevButtonHeight = 60;
     let prevButtonX = nextButtonX - prevButtonWidth - 50;
     let prevButtonY = nextButtonY;
 
+    
     let muteButtonWidth = 200;
     let muteButtonHeight = 60;
-    let muteButtonX = width / 2 - muteButtonWidth / 2; 
-    let muteButtonY = height - muteButtonHeight - 50; 
+    let muteButtonX = width / 2 - muteButtonWidth / 2;
+    let muteButtonY = height - muteButtonHeight - 50;
 
+    
     console.log("Canvas size:", width, height);
     console.log("Next Button Position:", nextButtonX, nextButtonY);
     console.log("Prev Button Position:", prevButtonX, prevButtonY);
+    console.log("Mute Button Position:", muteButtonX, muteButtonY);
 
-    fill(255, 215, 0); 
-    rect(nextButtonX, nextButtonY, nextButtonWidth, nextButtonHeight, 20); 
+    fill(255, 215, 0);
+    rect(nextButtonX, nextButtonY, nextButtonWidth, nextButtonHeight, 20);
     fill(0);
     textSize(24);
     textAlign(CENTER, CENTER);
-    textFont(customfont || 'Arial'); 
+    textFont(customfont || 'Arial');
     text("Next", nextButtonX + nextButtonWidth / 2, nextButtonY + nextButtonHeight / 2);
 
-    
     fill(255, 215, 0);
     rect(prevButtonX, prevButtonY, prevButtonWidth, prevButtonHeight, 20);
     fill(0);
-    textFont(customfont || 'Arial'); 
+    textFont(customfont || 'Arial');
     text("Previous", prevButtonX + prevButtonWidth / 2, prevButtonY + prevButtonHeight / 2);
 
-    // Mute Audio button
+    
     fill(255, 215, 0); 
     rect(muteButtonX, muteButtonY, muteButtonWidth, muteButtonHeight, 20);
     fill(0);
-    textFont(customfont || 'Arial'); 
+    textFont(customfont || 'Arial');
     text("Mute Audio", muteButtonX + muteButtonWidth / 2, muteButtonY + muteButtonHeight / 2);
+
     
     fill(255);
     textSize(20);
@@ -141,10 +159,11 @@ function drawVisualization() {
     textFont(customfont || 'Arial');
     text(`Chart ${currentChartIndex + 1} of ${charts.length}`, 50, 50);
 
+   
     if (state === "visualization" && song) {
         try {
             if (!song.isPlaying()) {
-                song.loop();
+                song.loop(); 
                 if (!isMuted) song.setVolume(0.5);
                 else song.setVolume(0);
             }
@@ -156,18 +175,15 @@ function drawVisualization() {
 
 function drawSpeechBubble(x, y, bubbletext) {
     
-    let bubbleWidth = 1000; 
-    let bubbleHeight = 200; 
-    let tailLength = 20;
-    let tailWidth = 20;
+    let bubbleWidth = 400; 
+    let bubbleHeight = 200;
 
     
     fill(255);
     textAlign(CENTER, CENTER);
     textSize(25);
-    textFont(customfont || 'Arial'); 
-    text(bubbletext, x + bubbleWidth / 2 + 200, y + bubbleHeight / 2 + 200);
-
+    textFont(customfont || 'Arial');
+    text(bubbletext, x + bubbleHeight / 2 + 600, y + bubbleHeight / 2 + 200);
 }
 
 function getBatmanCommentary() {
@@ -225,13 +241,13 @@ function mousePressed() {
         let muteButtonY = height - muteButtonHeight - 50;
         if (mouseX >= muteButtonX && mouseX <= muteButtonX + muteButtonWidth &&
             mouseY >= muteButtonY && mouseY <= muteButtonY + muteButtonHeight) {
-            isMuted = !isMuted;
+            isMuted = !isMuted; 
             if (song) {
                 song.setVolume(isMuted ? 0 : 0.5); 
             }
         }
     }
-    getAudioContext().resume();
+    getAudioContext().resume(); 
 }
 
 function cleanData() {
