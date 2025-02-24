@@ -62,7 +62,7 @@ function drawMenu() {
     if (isVideoPlaying && video && video.elt && video.elt.readyState >= 2) {
         image(video, 0, 0, width, height);
     } else {
-        background(0, 38, 77); // Fallback background if video isn’t playing or loaded
+        background(0);
     }
 
     fill(255);
@@ -321,8 +321,8 @@ function setupCharts() {
         barWidth: 40,
         margin: 15,
         axisThickness: 3,
-        chartPosX: 1050,
-        chartPosY: 200,
+        chartPosX: 800,
+        chartPosY: 500,
         customFont: customfont,
         title: "Horizontal Bar Chart - International Box Office",
         xAxisTitle: "Box Office (In Millions USD)",
@@ -342,7 +342,7 @@ function setupCharts() {
         margin: 15,
         axisThickness: 3,
         chartPosX: 800,
-        chartPosY: 700,
+        chartPosY: 1000,
         customFont: customfont,
         title: "Vertical Bar Chart - Domestic Box Office",
         xAxisTitle: "Movie Title",
@@ -362,7 +362,7 @@ function setupCharts() {
         margin: 15,
         axisThickness: 3,
         chartPosX: 800,
-        chartPosY: 700,
+        chartPosY: 1000,
         customFont: customfont,
         title: "Vertical Bar Chart - International Box Office",
         xAxisTitle: "Movie Title",
@@ -382,7 +382,7 @@ function setupCharts() {
         margin: 15,
         axisThickness: 3,
         chartPosX: 800,
-        chartPosY: 700,
+        chartPosY: 1000,
         customFont: customfont,
         title: "Stacked Bar Chart - Box Office",
         xAxisTitle: "Movie Title",
@@ -402,7 +402,7 @@ function setupCharts() {
         margin: 15,
         axisThickness: 3,
         chartPosX: 800,
-        chartPosY: 700,
+        chartPosY: 1000,
         customFont: customfont,
         title: "100% Stacked Bar Chart - Box Office",
         xAxisTitle: "Movie Title",
