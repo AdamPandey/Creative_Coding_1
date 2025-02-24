@@ -183,6 +183,24 @@ function drawVisualization() {
             console.error("Error playing music:", error);
         }
     }
+
+    let legendX = 350;
+    let legendY = height - 1050;
+    let legendBoxSize = 20;
+    let legendSpacing = 150;
+
+    fill(255, 215, 0);
+    rect(legendX, legendY - legendBoxSize / 2, legendBoxSize, legendBoxSize);
+    fill(255);
+    textSize(16);
+    textAlign(LEFT, CENTER);
+    textFont(customfont || 'Arial');
+    text("Domestic", legendX + legendBoxSize + 5, legendY);
+
+    fill(0, 191, 255);
+    rect(legendX + legendSpacing, legendY - legendBoxSize / 2, legendBoxSize, legendBoxSize);
+    fill(255);
+    text("International", legendX + legendSpacing + legendBoxSize + 5, legendY);
 }
 
 function drawSpeechBubble(x, y, bubbletext) {
