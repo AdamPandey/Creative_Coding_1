@@ -316,8 +316,8 @@ class BarChart {
         stroke(this.axisColor);
         strokeWeight(this.axisThickness);
         if (this.type === 'horizontal') {
-            line(0, 0, this.chartWidth, 0);
-            line(0, 0, 0, this.chartHeight);
+            line(0, this.chartHeight, this.chartWidth, this.chartHeight);
+            line(0, this.chartHeight, 0, 0);
         } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'percentStacked' || this.type === 'linearRegression') {
             line(0, 0, this.chartWidth, 0);
             line(0, 0, 0, -this.chartHeight);
@@ -342,7 +342,7 @@ class BarChart {
             for (let i = 0; i <= numTicks; i++) {
                 let xPos = i * tickIncrement * scaler;
                 if (xPos <= this.chartWidth) {
-                    line(xPos, 0, xPos, this.tickLength);
+                    line(xPos, this.chartHeight, xPos, this.chartHeight - this.tickLength);
                 }
             }
         } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'linearRegression') {
@@ -432,7 +432,7 @@ class BarChart {
                 const labelValue = i * tickIncrement;
                 const xPos = i * tickIncrement * scaler;
                 if (xPos <= this.chartWidth) {
-                    text(labelValue, xPos, this.tickLength + this.padding / 2);
+                    text(labelValue, xPos, this.chartHeight + this.tickLength + this.padding / 2);
                 }
             }
         } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'linearRegression') {
@@ -527,8 +527,8 @@ class BarChart {
         textSize(this.axisTitleSize);
         textFont(this.customFont);
         if (this.type === 'horizontal') {
-            text(this.xAxisTitle, this.chartPosX + this.chartWidth / 2, this.chartPosY - 30);
-        }else if (this.type !== 'spider') {
+            text(this.xAxisTitle, this.chartPosX + this.chartWidth / 2, this.chartPosY + this.chartHeight + this.padding * 2);
+        } else if (this.type !== 'spider') {
             text(this.xAxisTitle, this.chartPosX + this.chartWidth / 2, this.chartPosY + this.padding * 2);
         }
         pop();
@@ -542,8 +542,8 @@ class BarChart {
         textFont(this.customFont);
         push();
         if (this.type === 'horizontal') {
-            translate(this.chartPosX - 100, this.chartPosY + 190);
-        }else if (this.type === 'spider') {
+            translate(this.chartPosX - 100, this.chartPosY + this.chartHeight / 2);
+        } else if (this.type === 'spider') {
             // Do nothing for spider plot
         } else {
             translate(this.chartPosX - 100, this.chartPosY - this.chartHeight / 2);
