@@ -5,14 +5,28 @@ let customfont;
 let state = "menu";
 let currentChartIndex = 0;
 let batmanImg;
-let song; 
+let song;
+let isMuted = false; 
 
 function preload() {
-    data = loadTable('data/Combined.csv', 'csv', 'header');
-    customfont = loadFont('assets/Poppins-Regular.ttf');
-    batmanImg = loadImage('assets/batman.png');
-    song = loadSound('assets/batman_theme.mp3'); 
-    console.log("Preload complete. Font:", customfont, "Batman image:", batmanImg);
+    try {
+        
+        console.log("Attempting to load Combined.csv from:", 'data/Combined.csv');
+        data = loadTable('data/Combined.csv', 'csv', 'header');
+        
+        console.log("Attempting to load Poppins-Regular.ttf from:", 'assets/Poppins-Regular.ttf');
+        customfont = loadFont('assets/Poppins-Regular.ttf');
+        
+        console.log("Attempting to load batman.png from:", 'assets/batman.png');
+        batmanImg = loadImage('assets/batman.png');
+        
+        console.log("Attempting to load batman_theme.mp3 from:", 'assets/batman_theme.mp3');
+        song = loadSound('assets/batman_theme.mp3');
+        
+        console.log("Preload complete. Font:", customfont, "Batman image:", batmanImg, "Song:", song, "Data:", data);
+    } catch (error) {
+        console.error("Preload error:", error);
+    }
 }
 
 function setup() {
@@ -90,7 +104,11 @@ function drawVisualization() {
     let prevButtonX = nextButtonX - prevButtonWidth - 50;
     let prevButtonY = nextButtonY;
 
-    
+    let muteButtonWidth = 200;
+    let muteButtonHeight = 60;
+    let muteButtonX = width / 2 - muteButtonWidth / 2; 
+    let muteButtonY = height - muteButtonHeight - 50; 
+
     console.log("Canvas size:", width, height);
     console.log("Next Button Position:", nextButtonX, nextButtonY);
     console.log("Prev Button Position:", prevButtonX, prevButtonY);
@@ -110,6 +128,12 @@ function drawVisualization() {
     textFont(customfont || 'Arial'); 
     text("Previous", prevButtonX + prevButtonWidth / 2, prevButtonY + prevButtonHeight / 2);
 
+    // Mute Audio button
+    fill(255, 215, 0); 
+    rect(muteButtonX, muteButtonY, muteButtonWidth, muteButtonHeight, 20);
+    fill(0);
+    textFont(customfont || 'Arial'); 
+    text("Mute Audio", muteButtonX + muteButtonWidth / 2, muteButtonY + muteButtonHeight / 2);
     
     fill(255);
     textSize(20);
@@ -117,9 +141,16 @@ function drawVisualization() {
     textFont(customfont || 'Arial');
     text(`Chart ${currentChartIndex + 1} of ${charts.length}`, 50, 50);
 
-    if (state === "visualization" && !song.isPlaying()) {
-        song.loop(); 
-        song.setVolume(0.5); 
+    if (state === "visualization" && song) {
+        try {
+            if (!song.isPlaying()) {
+                song.loop();
+                if (!isMuted) song.setVolume(0.5);
+                else song.setVolume(0);
+            }
+        } catch (error) {
+            console.error("Error playing music:", error);
+        }
     }
 }
 
@@ -186,7 +217,21 @@ function mousePressed() {
             currentChartIndex = (currentChartIndex - 1 + charts.length) % charts.length;
             charts[currentChartIndex].animationProgress = 0; 
         }
+
+        
+        let muteButtonWidth = 200;
+        let muteButtonHeight = 60;
+        let muteButtonX = width / 2 - muteButtonWidth / 2;
+        let muteButtonY = height - muteButtonHeight - 50;
+        if (mouseX >= muteButtonX && mouseX <= muteButtonX + muteButtonWidth &&
+            mouseY >= muteButtonY && mouseY <= muteButtonY + muteButtonHeight) {
+            isMuted = !isMuted;
+            if (song) {
+                song.setVolume(isMuted ? 0 : 0.5); 
+            }
+        }
     }
+    getAudioContext().resume();
 }
 
 function cleanData() {
