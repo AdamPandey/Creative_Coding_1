@@ -2,24 +2,28 @@ let data;
 let cleanedData = [];
 let charts = [];
 let customfont;
-let state = "menu"; 
-let currentChartIndex = 0; 
+let state = "menu";
+let currentChartIndex = 0;
+let batmanImg;
+let song; 
 
 function preload() {
     data = loadTable('data/Combined.csv', 'csv', 'header');
     customfont = loadFont('assets/Poppins-Regular.ttf');
+    batmanImg = loadImage('assets/batman.png');
+    song = loadSound('assets/batman_theme.mp3'); 
+    console.log("Preload complete. Font:", customfont, "Batman image:", batmanImg);
 }
 
 function setup() {
-    createCanvas(1920, 1080);
+    createCanvas(2000, 1500); 
     angleMode(RADIANS);
-    
     cleanData();
     setupCharts();
 }
 
 function draw() {
-    background(0, 38, 77); 
+    background(0, 38, 77);
 
     if (state === "menu") {
         drawMenu();
@@ -34,50 +38,121 @@ function drawMenu() {
     textAlign(CENTER, CENTER);
     textSize(50);
     textFont(customfont);
-    text("The Batman Experience", width / 2, height / 2 - 100);
+    text("Batman Box Office Visualizations", width / 2, height / 2 - 100);
 
     
-    let buttonWidth = 500;
+    let buttonWidth = 300;
     let buttonHeight = 80;
     let buttonX = width / 2 - buttonWidth / 2;
     let buttonY = height / 2;
 
     fill(255, 215, 0); 
-    rect(buttonX, buttonY, buttonWidth, buttonHeight, 20); 
+    rect(buttonX, buttonY, buttonWidth, buttonHeight, 20);
     fill(0);
     textSize(30);
-    text("Start Visualization Experience", buttonX + buttonWidth / 2, buttonY + buttonHeight / 2);
+    text("Start Visualization", buttonX + buttonWidth / 2, buttonY + buttonHeight / 2);
 }
 
 function drawVisualization() {
+    
     charts[currentChartIndex].render();
 
-    // Next button
+    
+    if (charts[currentChartIndex].animationProgress < 1) {
+        let animationSpeed = 0.03; 
+        charts[currentChartIndex].animationProgress = min(charts[currentChartIndex].animationProgress + animationSpeed, 1);
+    }
+
+    
+    let batmanWidth = 400; 
+    let batmanHeight = 600;
+    let batmanX = 50;
+    let batmanY = height - batmanHeight - 100; 
+    if (batmanImg && batmanImg.width > 1 && batmanImg.height > 1) { 
+        image(batmanImg, batmanX, batmanY, batmanWidth, batmanHeight);
+    } else {
+        console.warn("Batman image failed to load, using placeholder rectangle");
+        fill(0, 0, 255); 
+        rect(batmanX, batmanY, batmanWidth, batmanHeight);
+    }
+
+    
+    drawSpeechBubble(batmanX + batmanWidth + 20, batmanY + 50, getBatmanCommentary());
+
+    
     let nextButtonWidth = 150;
     let nextButtonHeight = 60;
     let nextButtonX = width - nextButtonWidth - 50;
-    let nextButtonY = height - nextButtonHeight - 50;
-    fill(255, 215, 0);
-    rect(nextButtonX, nextButtonY, nextButtonWidth, nextButtonHeight, 20);
+    let nextButtonY = 150; 
+
+    let prevButtonWidth = 150;
+    let prevButtonHeight = 60;
+    let prevButtonX = nextButtonX - prevButtonWidth - 50;
+    let prevButtonY = nextButtonY;
+
+    
+    console.log("Canvas size:", width, height);
+    console.log("Next Button Position:", nextButtonX, nextButtonY);
+    console.log("Prev Button Position:", prevButtonX, prevButtonY);
+
+    fill(255, 215, 0); 
+    rect(nextButtonX, nextButtonY, nextButtonWidth, nextButtonHeight, 20); 
     fill(0);
     textSize(24);
     textAlign(CENTER, CENTER);
+    textFont(customfont || 'Arial'); 
     text("Next", nextButtonX + nextButtonWidth / 2, nextButtonY + nextButtonHeight / 2);
 
-    // Previous button
-    let prevButtonWidth = 150;
-    let prevButtonHeight = 60;
-    let prevButtonX = width - nextButtonWidth - prevButtonWidth - 100;
-    let prevButtonY = height - prevButtonHeight - 50;
+    
     fill(255, 215, 0);
     rect(prevButtonX, prevButtonY, prevButtonWidth, prevButtonHeight, 20);
     fill(0);
+    textFont(customfont || 'Arial'); 
     text("Previous", prevButtonX + prevButtonWidth / 2, prevButtonY + prevButtonHeight / 2);
 
+    
     fill(255);
     textSize(20);
     textAlign(LEFT, TOP);
+    textFont(customfont || 'Arial');
     text(`Chart ${currentChartIndex + 1} of ${charts.length}`, 50, 50);
+
+    if (state === "visualization" && !song.isPlaying()) {
+        song.loop(); 
+        song.setVolume(0.5); 
+    }
+}
+
+function drawSpeechBubble(x, y, bubbletext) {
+    
+    let bubbleWidth = 1000; 
+    let bubbleHeight = 200; 
+    let tailLength = 20;
+    let tailWidth = 20;
+
+    
+    fill(255);
+    textAlign(CENTER, CENTER);
+    textSize(25);
+    textFont(customfont || 'Arial'); 
+    text(bubbletext, x + bubbleWidth / 2 + 200, y + bubbleHeight / 2 + 200);
+
+}
+
+function getBatmanCommentary() {
+    
+    const commentaries = [
+        "I’ve analyzed the domestic box office—1966’s 'Batman: The Movie' earned $137.8M, but 'The Dark Knight' dominates with $534.8M!", // Horizontal - Domestic
+        "Internationally, 'The Dark Knight Rises' led with $634.1M, far surpassing 'Batman: The Movie’s' zero international earnings.", // Horizontal - International
+        "Vertically, 'The Dark Knight' stands tall at $534.8M domestically—Gotham’s finest box office moment!", // Vertical - Domestic
+        "'The Dark Knight Rises' tops international earnings at $634.1M vertically—impressive global impact.", // Vertical - International
+        "Stacked, 'The Dark Knight' combines $534.8M domestic and $471.1M international for a massive $1,005.9M total—true justice for Gotham!", // Stacked
+        "In percentages, 'The Dark Knight' shows 53% domestic and 47% international—balanced global appeal.", // Percent Stacked
+        "My regression analysis shows domestic earnings rising steadily since 1966—Gotham’s box office power grows!", // Linear Regression
+        "The spider plot reveals 'The Dark Knight’s' dominance across domestic and international earnings—unmatched in my bat-cave!", // Spider
+        "This streamgraph flows like the Bat-signal—'The Dark Knight' peaks at over $1B worldwide, a dark triumph over time!" // Streamgraph
+    ];
+    return commentaries[currentChartIndex];
 }
 
 function mousePressed() {
@@ -95,19 +170,21 @@ function mousePressed() {
         let nextButtonWidth = 150;
         let nextButtonHeight = 60;
         let nextButtonX = width - nextButtonWidth - 50;
-        let nextButtonY = height - nextButtonHeight - 50;
+        let nextButtonY = 150;
         if (mouseX >= nextButtonX && mouseX <= nextButtonX + nextButtonWidth &&
             mouseY >= nextButtonY && mouseY <= nextButtonY + nextButtonHeight) {
             currentChartIndex = (currentChartIndex + 1) % charts.length;
+            charts[currentChartIndex].animationProgress = 0; 
         }
 
         let prevButtonWidth = 150;
         let prevButtonHeight = 60;
-        let prevButtonX = width - nextButtonWidth - prevButtonWidth - 100;
-        let prevButtonY = height - prevButtonHeight - 50;
+        let prevButtonX = nextButtonX - prevButtonWidth - 50;
+        let prevButtonY = nextButtonY;
         if (mouseX >= prevButtonX && mouseX <= prevButtonX + prevButtonWidth &&
             mouseY >= prevButtonY && mouseY <= prevButtonY + prevButtonHeight) {
             currentChartIndex = (currentChartIndex - 1 + charts.length) % charts.length;
+            charts[currentChartIndex].animationProgress = 0; 
         }
     }
 }
@@ -136,8 +213,8 @@ function setupCharts() {
         barWidth: 40,
         margin: 15,
         axisThickness: 3,
-        chartPosX: 1050,
-        chartPosY: 200,
+        chartPosX: 800,
+        chartPosY: 500,
         customFont: customfont,
         title: "Horizontal Bar Chart - Domestic Box Office",
         xAxisTitle: "Box Office (In Millions USD)",

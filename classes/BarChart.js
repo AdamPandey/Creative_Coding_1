@@ -63,13 +63,15 @@ class BarChart {
         } else if (this.type === 'spider') {
             this.gap = 0;
             const maxY = max(this.data.map(row => this.yValues.reduce((sum, y) => sum + row[y], 0)));
-            this.scaler = min(this.chartWidth, this.chartHeight) / 2 / (maxY || 1); 
+            this.scaler = min(this.chartWidth, this.chartHeight) / 2 / (maxY || 1);
         } else {
             this.gap = 0;
             this.scaler = 1;
         }
 
-        
+        // Animation state
+        this.animationProgress = 0; 
+
         this.titleAbbreviations = {
             "Batman: The Movie": "Batman '66",
             "Batman": "Batman '89",
@@ -123,18 +125,23 @@ class BarChart {
         translate(this.margin, 0);
         for (let i = 0; i < this.data.length; i++) {
             let xPos = (this.barWidth + this.gap) * i;
-            let barHeight = Math.min(this.data[i][this.yValues[0]] * this.scaler, this.chartHeight);
+            let fullHeight = Math.min(this.data[i][this.yValues[0]] * this.scaler, this.chartHeight);
+            let animatedHeight = fullHeight * this.easeInOutQuad(this.animationProgress);
+
             fill(this.barColours[0]);
             noStroke();
-            rect(xPos, -barHeight, this.barWidth, barHeight);
+            rect(xPos, 0, this.barWidth, -animatedHeight); 
 
-            fill(255);
-            ellipse(xPos + this.barWidth / 2, -barHeight - this.padding / 2, 30, 30);
-            fill(0);
-            textAlign(CENTER, CENTER);
-            textSize(this.labelSize);
-            textFont(this.customFont);
-            text(this.data[i][this.yValues[0]], xPos + this.barWidth / 2, -barHeight - this.padding / 2);
+           
+            if (this.animationProgress > 0) {
+                fill(255);
+                ellipse(xPos + this.barWidth / 2, -animatedHeight - this.padding / 2, 30, 30);
+                fill(0);
+                textAlign(CENTER, CENTER);
+                textSize(this.labelSize);
+                textFont(this.customFont);
+                text(this.data[i][this.yValues[0]], xPos + this.barWidth / 2, -animatedHeight - this.padding / 2);
+            }
         }
         pop();
     }
@@ -144,17 +151,23 @@ class BarChart {
         translate(0, this.margin);
         for (let i = 0; i < this.data.length; i++) {
             let yPos = (this.barWidth + this.gap) * i;
-            let barLength = this.data[i][this.yValues[0]] * this.scaler;
+            let fullLength = this.data[i][this.yValues[0]] * this.scaler;
+            let animatedLength = fullLength * this.easeInOutQuad(this.animationProgress);
+
             fill(this.barColours[0]);
             noStroke();
-            rect(0, yPos, barLength, this.barWidth);
-            fill(255);
-            ellipse(barLength + this.padding / 2, yPos + this.barWidth / 2, 30, 30);
-            fill(0);
-            textAlign(CENTER, CENTER);
-            textSize(this.labelSize);
-            textFont(this.customFont);
-            text(this.data[i][this.yValues[0]], barLength + this.padding / 2, yPos + this.barWidth / 2);
+            rect(0, yPos, animatedLength, this.barWidth); 
+
+            
+            if (this.animationProgress > 0) {
+                fill(255);
+                ellipse(animatedLength + this.padding / 2, yPos + this.barWidth / 2, 30, 30);
+                fill(0);
+                textAlign(CENTER, CENTER);
+                textSize(this.labelSize);
+                textFont(this.customFont);
+                text(this.data[i][this.yValues[0]], animatedLength + this.padding / 2, yPos + this.barWidth / 2);
+            }
         }
         pop();
     }
@@ -172,33 +185,39 @@ class BarChart {
                 let segmentHeight = this.type === 'percentStacked' ? 
                     (total === 0 ? 0 : (value / total) * this.scaler) : 
                     value * this.scaler;
-                let cappedSegmentHeight = Math.min(segmentHeight, this.chartHeight - accumulatedHeight);
+                let animatedHeight = segmentHeight * this.easeInOutQuad(this.animationProgress);
+                let cappedSegmentHeight = Math.min(animatedHeight, this.chartHeight - accumulatedHeight);
+
                 fill(this.barColours[j % this.barColours.length]);
                 noStroke();
                 rect(xPos, -accumulatedHeight - cappedSegmentHeight, this.barWidth, cappedSegmentHeight);
-                accumulatedHeight += cappedSegmentHeight;
 
-                if (this.type === 'stacked') {
-                    fill(255);
-                    ellipse(xPos + this.barWidth / 2, -accumulatedHeight - this.padding / 2, 30, 30);
-                    fill(0);
-                    textAlign(CENTER, CENTER);
-                    textSize(this.labelSize);
-                    textFont(this.customFont);
-                    text(this.data[i][this.yValues[j]], xPos + this.barWidth / 2, -accumulatedHeight - this.padding / 2);
-                } else if (this.type === 'percentStacked') {
-                    let percent = total === 0 ? 0 : Math.round((value / total) * 100);
-                    fill(255);
-                    ellipse(xPos + this.barWidth / 2, -accumulatedHeight - this.padding / 2, 30, 30);
-                    fill(0);
-                    textAlign(CENTER, CENTER);
-                    textSize(this.labelSize);
-                    textFont(this.customFont);
-                    text(`${percent}%`, xPos + this.barWidth / 2, -accumulatedHeight - this.padding / 2);
+                
+                if (this.animationProgress > 0) {
+                    if (this.type === 'stacked') {
+                        fill(255);
+                        ellipse(xPos + this.barWidth / 2, -accumulatedHeight - cappedSegmentHeight - this.padding / 2, 30, 30);
+                        fill(0);
+                        textAlign(CENTER, CENTER);
+                        textSize(this.labelSize);
+                        textFont(this.customFont);
+                        text(this.data[i][this.yValues[j]], xPos + this.barWidth / 2, -accumulatedHeight - cappedSegmentHeight - this.padding / 2);
+                    } else if (this.type === 'percentStacked') {
+                        let percent = total === 0 ? 0 : Math.round((value / total) * 100);
+                        fill(255);
+                        ellipse(xPos + this.barWidth / 2, -accumulatedHeight - cappedSegmentHeight - this.padding / 2, 30, 30);
+                        fill(0);
+                        textAlign(CENTER, CENTER);
+                        textSize(this.labelSize);
+                        textFont(this.customFont);
+                        text(`${percent}%`, xPos + this.barWidth / 2, -accumulatedHeight - cappedSegmentHeight - this.padding / 2);
+                    }
                 }
+                accumulatedHeight += cappedSegmentHeight;
             }
 
-            if (this.type === 'stacked') {
+            
+            if (this.type === 'stacked' && this.animationProgress > 0) {
                 let total = this.yValues.reduce((sum, y) => sum + this.data[i][y], 0);
                 fill(255);
                 ellipse(xPos + this.barWidth / 2, -accumulatedHeight - this.padding / 2, 30, 30);
@@ -216,7 +235,6 @@ class BarChart {
         push();
         translate(this.margin, 0);
 
-       
         for (let i = 0; i < this.data.length; i++) {
             let xVal = parseFloat(this.data[i][this.xValue]);
             let yVal = this.data[i][this.yValues[0]];
@@ -233,7 +251,6 @@ class BarChart {
             text(yVal, xPos, -yPos - this.padding / 2);
         }
 
-        
         stroke(255, 0, 0);
         strokeWeight(2);
         const xActualMin = min(this.data.map(row => parseFloat(row[this.xValue])));
@@ -251,7 +268,6 @@ class BarChart {
         push();
         translate(this.chartWidth / 2, this.chartHeight / 2);
 
-        
         const radius = min(this.chartWidth, this.chartHeight) / 2 - this.padding;
         const angleStep = TWO_PI / this.data.length;
 
@@ -263,7 +279,6 @@ class BarChart {
             strokeWeight(this.axisThickness);
             line(0, 0, x, y);
 
-            
             let labelX = cos(angle) * (radius + this.padding / 2);
             let labelY = sin(angle) * (radius + this.padding / 2);
             fill(this.axisTextColour);
@@ -305,7 +320,7 @@ class BarChart {
             line(0, 0, 0, this.chartHeight);
         } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'percentStacked' || this.type === 'linearRegression') {
             line(0, 0, this.chartWidth, 0);
-            line(0, 0, 0, -this.chartHeight); 
+            line(0, 0, 0, -this.chartHeight);
         } 
         pop();
     }
@@ -342,7 +357,7 @@ class BarChart {
                 line(-this.tickLength, yPos, 0, yPos);
             }
         } else if (this.type === 'percentStacked') {
-            const tickIncrement = 25; 
+            const tickIncrement = 25;
             const numTicks = 4;
             const scaler = this.chartHeight / 100;
 
@@ -455,7 +470,7 @@ class BarChart {
         if (this.type === 'horizontal') {
             text(this.title, this.chartPosX + this.chartWidth / 2, this.chartPosY - 2 * this.padding - 50);
         } else if (this.type === 'spider') {
-            text(this.title, this.chartPosX + this.chartWidth / 2, this.chartPosY - this.chartHeight / 2 + 200); 
+            text(this.title, this.chartPosX + this.chartWidth / 2, this.chartPosY - this.chartHeight / 2 + 200);
         } else {
             text(this.title, this.chartPosX + this.chartWidth / 2, this.chartPosY - this.chartHeight - 2 * this.padding);
         }
@@ -513,7 +528,7 @@ class BarChart {
         textFont(this.customFont);
         if (this.type === 'horizontal') {
             text(this.xAxisTitle, this.chartPosX + this.chartWidth / 2, this.chartPosY - 30);
-        } else if (this.type !== 'spider') {
+        }else if (this.type !== 'spider') {
             text(this.xAxisTitle, this.chartPosX + this.chartWidth / 2, this.chartPosY + this.padding * 2);
         }
         pop();
@@ -528,7 +543,7 @@ class BarChart {
         push();
         if (this.type === 'horizontal') {
             translate(this.chartPosX - 100, this.chartPosY + 190);
-        } else if (this.type === 'spider') {
+        }else if (this.type === 'spider') {
             // Do nothing for spider plot
         } else {
             translate(this.chartPosX - 100, this.chartPosY - this.chartHeight / 2);
@@ -575,5 +590,9 @@ class BarChart {
         this.renderXAxisTitle();
         this.renderYAxisTitle();
         this.renderAverageLine();
+    }
+
+    easeInOutQuad(t) {
+        return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
     }
 }
