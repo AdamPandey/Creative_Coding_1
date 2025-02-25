@@ -338,7 +338,7 @@ function setupCharts() {
         xAxisTitle: "Box Office (In Millions USD)",
         yAxisTitle: "Movie Title",
         barColours: [color(255, 215, 0)],
-        showAverageLine: true
+        showAverageLine: false
     }));
 
     charts.push(new BarChart({
@@ -511,25 +511,6 @@ function setupCharts() {
         chartPosY: 800,
         customFont: customfont,
         title: "Curved Area - Box Office",
-        xAxisTitle: "Movies",
-        yAxisTitle: "Box Office (In Millions USD)",
-        barColours: [color(0, 191, 255)],
-        showAverageLine: false
-    }));
-
-    charts.push(new BarChart({
-        data: cleanedData,
-        xValue: "Title",
-        yValues: ["International"],
-        type: "dsds",
-        chartHeight: 500,
-        chartWidth: 600,
-        margin: 15,
-        axisThickness: 3,
-        chartPosX: 800,
-        chartPosY: 800,
-        customFont: customfont,
-        title: "Fall Back Chart Box Office",
         xAxisTitle: "Movies",
         yAxisTitle: "Box Office (In Millions USD)",
         barColours: [color(0, 191, 255)],
