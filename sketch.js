@@ -201,6 +201,14 @@ function drawVisualization() {
     rect(legendX + legendSpacing, legendY - legendBoxSize / 2, legendBoxSize, legendBoxSize);
     fill(255);
     text("International", legendX + legendSpacing + legendBoxSize + 5, legendY);
+
+    let averageLineY = legendY + legendSpacing - 100;
+    stroke(255, 0, 0); 
+    strokeWeight(2);
+    line(legendX, averageLineY, legendX + legendBoxSize, averageLineY);
+    noStroke(); 
+    fill(255);
+    text("Average line", legendX + legendBoxSize + 5, averageLineY);
 }
 
 function drawSpeechBubble(x, y, bubbletext) {
