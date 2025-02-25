@@ -386,9 +386,6 @@ class BarChart {
         } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'percentStacked' || this.type === 'linearRegression' || this.type === 'curvedArea') {
             line(0, 0, this.chartWidth, 0);
             line(0, 0, 0, -this.chartHeight);
-        }else {
-            line(0, 0, this.chartWidth, 0);
-            line(0, 0, 0, -this.chartHeight);
         }
         pop();
     }
@@ -433,17 +430,6 @@ class BarChart {
                 let yPos = -i * tickIncrement * scaler;
                 line(-this.tickLength, yPos, 0, yPos);
             }
-        }else {
-            const maxValue = max(this.data.map(row => this.yValues.reduce((sum, y) => sum + row[y], 0)));
-            const tickIncrement = 100;
-            const maxTickValue = Math.ceil(maxValue / tickIncrement) * tickIncrement;
-            const numTicks = Math.ceil(maxValue / tickIncrement);
-            const scaler = this.chartHeight / maxTickValue;
-    
-            for (let i = 0; i <= numTicks; i++) {
-                let yPos = -i * tickIncrement * scaler;
-                line(-this.tickLength, yPos, 0, yPos);
-            }
         }
         pop();
     }
@@ -482,17 +468,6 @@ class BarChart {
                 textSize(this.labelSize);
                 push();
                 translate(xPos, this.padding);
-                rotate(-PI/2);
-                text(displayTitle, 0, 0);
-                pop();
-            }else {
-                let xPos = (this.barWidth + this.gap) * i;
-                fill(this.axisTextColour);
-                textFont(this.customFont);
-                textAlign(CENTER, CENTER);
-                textSize(this.labelSize);
-                push();
-                translate(xPos + this.barWidth / 2, this.padding);
                 rotate(-PI/2);
                 text(displayTitle, 0, 0);
                 pop();
@@ -546,18 +521,6 @@ class BarChart {
                 const labelValue = i * tickIncrement;
                 const yPos = -i * tickIncrement * scaler;
                 text(`${labelValue}%`, -this.tickLength - this.padding / 2, yPos);
-            }
-        }else {
-            const maxValue = max(this.data.map(row => this.yValues.reduce((sum, y) => sum + row[y], 0)));
-            const tickIncrement = 100;
-            const maxTickValue = Math.ceil(maxValue / tickIncrement) * tickIncrement;
-            const numTicks = Math.ceil(maxValue / tickIncrement);
-            const scaler = this.chartHeight / maxTickValue;
-    
-            for (let i = 0; i <= numTicks; i++) {
-                const labelValue = i * tickIncrement;
-                const yPos = -i * tickIncrement * scaler;
-                text(labelValue, -this.tickLength - this.padding / 2, yPos);
             }
         }
         pop();
@@ -614,17 +577,6 @@ class BarChart {
             const numTicks = 4;
             const scaler = this.chartHeight / 100;
 
-            for (let i = 0; i <= numTicks; i++) {
-                const yPos = -i * tickIncrement * scaler;
-                line(0, yPos, this.chartWidth, yPos);
-            }
-        }else {
-            const maxValue = max(this.data.map(row => this.yValues.reduce((sum, y) => sum + row[y], 0)));
-            const tickIncrement = 100;
-            const maxTickValue = Math.ceil(maxValue / tickIncrement) * tickIncrement;
-            const numTicks = Math.ceil(maxValue / tickIncrement);
-            const scaler = this.chartHeight / maxTickValue;
-    
             for (let i = 0; i <= numTicks; i++) {
                 const yPos = -i * tickIncrement * scaler;
                 line(0, yPos, this.chartWidth, yPos);
