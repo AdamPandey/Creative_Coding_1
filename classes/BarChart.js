@@ -37,6 +37,10 @@ class BarChart {
         this.labelSize = options.labelSize || Math.min(this.chartWidth, this.chartHeight) * 0.03;
         this.padding = options.padding || Math.min(this.chartWidth, this.chartHeight) * 0.1;
 
+
+        this.hoveredIndex = -1;
+        this.hoveredValue = null;
+
         // Calculate gap and scaler based on chart type
         if (this.type === 'horizontal') {
             this.gap = (this.chartHeight - (this.data.length * this.barWidth) - (this.margin * 2)) / (this.data.length - 1);
@@ -101,6 +105,131 @@ class BarChart {
             return (value / 1000).toFixed(1) + " B";
         }
         return value.toString();
+    }
+
+
+    renderHover() {
+        if (this.hoveredIndex !== -1 && this.hoveredValue !== null) {
+            let x = mouseX + 10; 
+            let y = mouseY - 10;
+            let valueText = this.formatNumber(this.hoveredValue);
+    
+            
+            fill(0, 100); 
+            noStroke();
+            let textWidth1 = textWidth(valueText) + 20; 
+            let textHeight = this.labelSize + 10; 
+            rect(x, y - textHeight, textWidth1, textHeight, 5); 
+    
+            
+            fill(255);
+            textSize(this.labelSize);
+            textAlign(LEFT, CENTER);
+            textFont(this.customFont);
+            text(valueText, x + 10, y - this.labelSize / 2);
+    
+            
+            if (batmanImg1) {
+                let batmanWidth = 50;
+                let batmanHeight = 50;
+                let batmanX = x + textWidth1 + 10; 
+                let batmanY = y - batmanHeight / 2;
+    
+                image(batmanImg1, batmanX, batmanY, batmanWidth, batmanHeight);
+            }
+        }
+    }
+
+    checkHover() {
+        this.hoveredIndex = -1;
+        this.hoveredValue = null;
+    
+        if (this.type === 'vertical') {
+            for (let i = 0; i < this.data.length; i++) {
+                let xPos = this.chartPosX + this.margin + (this.barWidth + this.gap) * i;
+                let yPos = this.chartPosY;
+                let barWidth = this.barWidth;
+                let barHeight = Math.min(this.data[i][this.yValues[0]] * this.scaler, this.chartHeight) * this.easeInOutQuad(this.animationProgress);
+    
+                if (mouseX >= xPos && mouseX <= xPos + barWidth &&
+                    mouseY <= yPos && mouseY >= yPos - barHeight) {
+                    this.hoveredIndex = i;
+                    this.hoveredValue = this.data[i][this.yValues[0]];
+                    break;
+                }
+            }
+        } else if (this.type === 'horizontal') {
+            for (let i = 0; i < this.data.length; i++) {
+                let xPos = this.chartPosX;
+                let yPos = this.chartPosY + this.margin + (this.barWidth + this.gap) * i;
+                let barLength = this.data[i][this.yValues[0]] * this.scaler * this.easeInOutQuad(this.animationProgress);
+                let barHeight = this.barWidth;
+    
+                if (mouseX >= xPos && mouseX <= xPos + barLength &&
+                    mouseY >= yPos && mouseY <= yPos + barHeight) {
+                    this.hoveredIndex = i;
+                    this.hoveredValue = this.data[i][this.yValues[0]];
+                    break;
+                }
+            }
+        } else if (this.type === 'stacked' || this.type === 'percentStacked') {
+            for (let i = 0; i < this.data.length; i++) {
+                let xPos = this.chartPosX + this.margin + (this.barWidth + this.gap) * i;
+                let accumulatedHeight = 0;
+                let total = this.yValues.reduce((sum, y) => sum + this.data[i][y], 0);
+                let isHoveringTotal = false;
+    
+                for (let j = 0; j < this.yValues.length; j++) {
+                    let value = this.data[i][this.yValues[j]];
+                    let segmentHeight = this.type === 'percentStacked' ? 
+                        (total === 0 ? 0 : (value / total) * this.scaler) : 
+                        value * this.scaler;
+                    let animatedHeight = segmentHeight * this.easeInOutQuad(this.animationProgress);
+                    let cappedSegmentHeight = Math.min(animatedHeight, this.chartHeight - accumulatedHeight);
+    
+                    if (mouseX >= xPos && mouseX <= xPos + this.barWidth &&
+                        mouseY <= this.chartPosY && mouseY >= this.chartPosY - (accumulatedHeight + cappedSegmentHeight)) {
+                        this.hoveredIndex = i;
+                        this.hoveredValue = this.data[i][this.yValues[j]];
+                        return; 
+                    }
+                    accumulatedHeight += cappedSegmentHeight;
+                }
+    
+                
+                if (mouseX >= xPos && mouseX <= xPos + this.barWidth &&
+                    mouseY <= this.chartPosY && mouseY >= this.chartPosY - accumulatedHeight) {
+                    this.hoveredIndex = i;
+                    this.hoveredValue = total;
+                }
+            }
+        } else if (this.type === 'curvedArea') {
+            for (let i = 0; i < this.data.length; i++) {
+                let x = this.chartPosX + this.margin + i * (this.barWidth + this.gap);
+                let y = this.chartPosY - this.data[i][this.yValues[0]] * this.scaler * this.easeInOutQuad(this.animationProgress);
+                let radius = 15;
+    
+                if (dist(mouseX, mouseY, x, y) < radius) {
+                    this.hoveredIndex = i;
+                    this.hoveredValue = this.data[i][this.yValues[0]];
+                    break;
+                }
+            }
+        } else if (this.type === 'linearRegression') {
+            for (let i = 0; i < this.data.length; i++) {
+                let xVal = parseFloat(this.data[i][this.xValue]);
+                let yVal = this.data[i][this.yValues[0]];
+                let xPos = this.chartPosX + this.margin + (xVal - this.xMin) * this.xScaler;
+                let yPos = this.chartPosY - Math.min(yVal * this.yScaler, this.chartHeight);
+                let radius = 5;
+    
+                if (dist(mouseX, mouseY, xPos, yPos) < radius) {
+                    this.hoveredIndex = i;
+                    this.hoveredValue = yVal;
+                    break;
+                }
+            }
+        }
     }
 
     calculateLinearRegression() {
@@ -658,6 +787,8 @@ class BarChart {
         this.renderXAxisTitle();
         this.renderYAxisTitle();
         this.renderAverageLine();
+        this.checkHover();
+        this.renderHover();
     }
 
     easeInOutQuad(t) {

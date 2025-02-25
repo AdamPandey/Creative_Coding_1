@@ -31,6 +31,8 @@ function preload() {
         
         console.log("Attempting to load BatmanForeverAlternate.ttf from:", 'assets/BatmanForeverAlternate.ttf');
         batmanFont = loadFont('assets/batmfa__.ttf');
+
+        batmanImg1 = loadImage('assets/batman.svg');
         
         console.log("Preload complete. Font:", customfont, "Batman image:", batmanImg, "Song:", song, "Video:", video, "Batman Font:", batmanFont, "Data:", data);
     } catch (error) {
@@ -55,6 +57,8 @@ function draw() {
         drawMenu();
     } else if (state === "visualization") {
         drawVisualization();
+        charts[currentChartIndex].checkHover();
+        charts[currentChartIndex].renderHover();
     }
 }
 
