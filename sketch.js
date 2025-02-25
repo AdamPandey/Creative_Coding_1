@@ -504,4 +504,23 @@ function setupCharts() {
         barColours: [color(0, 191, 255)],
         showAverageLine: false
     }));
+
+    charts.push(new BarChart({
+        data: cleanedData,
+        xValue: "Title",
+        yValues: ["International"],
+        type: "dsds",
+        chartHeight: 500,
+        chartWidth: 600,
+        margin: 15,
+        axisThickness: 3,
+        chartPosX: 800,
+        chartPosY: 800,
+        customFont: customfont,
+        title: "Fall Back Chart Box Office",
+        xAxisTitle: "Movies",
+        yAxisTitle: "Box Office (In Millions USD)",
+        barColours: [color(0, 191, 255)],
+        showAverageLine: false
+    }));
 }
