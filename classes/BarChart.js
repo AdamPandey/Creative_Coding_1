@@ -64,13 +64,17 @@ class BarChart {
             this.gap = 0;
             const maxY = max(this.data.map(row => this.yValues.reduce((sum, y) => sum + row[y], 0)));
             this.scaler = min(this.chartWidth, this.chartHeight) / 2 / (maxY || 1);
+        } else if (this.type === 'curvedArea') {
+            this.gap = (this.chartWidth - (this.data.length * this.barWidth) - (this.margin * 2)) / (this.data.length - 1);
+            const maxY = max(this.data.map(row => row[this.yValues[0]]));
+            this.scaler = this.chartHeight / (maxY || 1);
         } else {
             this.gap = 0;
             this.scaler = 1;
         }
 
         // Animation state
-        this.animationProgress = 0; 
+        this.animationProgress = 0;
 
         this.titleAbbreviations = {
             "Batman: The Movie": "Batman '66",
@@ -85,6 +89,18 @@ class BarChart {
             "Justice League": "Justice",
             "The Batman": "The Batman"
         };
+    }
+
+    
+    formatNumber(value) {
+        if (value >= 1000000000) {
+            return (value / 1000000000).toFixed(1) + " M";
+        } else if (value >= 1000000) {
+            return (value / 1000000).toFixed(1) + " K";
+        } else if (value >= 1000) {
+            return (value / 1000).toFixed(1) + " B";
+        }
+        return value.toString();
     }
 
     calculateLinearRegression() {
@@ -113,10 +129,63 @@ class BarChart {
             this.renderLinearRegressionPoints();
         } else if (this.type === 'spider') {
             this.renderSpiderPlot();
+        } else if (this.type === 'curvedArea') {
+            this.renderCurvedArea();
         } else {
             this.renderVerticalBars();
         }
 
+        pop();
+    }
+
+    renderCurvedArea() {
+        push();
+        translate(this.margin + 25, 0);
+    
+        
+        let gradient = drawingContext.createLinearGradient(0, 0, 0, -this.chartHeight);
+        gradient.addColorStop(0, color(this.barColours[0].levels[0], this.barColours[0].levels[1], this.barColours[0].levels[2], 150));
+        drawingContext.fillStyle = gradient;
+    
+        noStroke();
+        beginShape();
+        vertex(0, 0);
+    
+        for (let i = 0; i < this.data.length; i++) {
+            let x = i * (this.barWidth + this.gap);
+            let y = -this.data[i][this.yValues[0]] * this.scaler * this.easeInOutQuad(this.animationProgress);
+    
+            if (i === 0) {
+                vertex(x, y); 
+            } else {
+                let prevX = (i - 1) * (this.barWidth + this.gap);
+                let prevY = -this.data[(i - 1)][this.yValues[0]] * this.scaler * this.easeInOutQuad(this.animationProgress);
+                let controlX1 = prevX + (x - prevX) * 0.33;
+                let controlY1 = prevY;
+                let controlX2 = prevX + (x - prevX) * 0.67;
+                let controlY2 = y;
+                bezierVertex(controlX1, controlY1, controlX2, controlY2, x, y);
+            }
+        }
+    
+        vertex((this.data.length - 1) * (this.barWidth + this.gap), 0);
+        endShape(CLOSE);
+    
+        
+        if (this.animationProgress > 0) {
+            for (let i = 0; i < this.data.length; i++) {
+                let x = i * (this.barWidth + this.gap);
+                let y = -this.data[i][this.yValues[0]] * this.scaler * this.easeInOutQuad(this.animationProgress);
+                fill(255);
+                ellipse(x, y, 30, 30);
+                fill(0);
+                textAlign(CENTER, CENTER);
+                textSize(this.labelSize);
+                textFont(this.customFont);
+                text(this.formatNumber(this.data[i][this.yValues[0]]), x, y);
+            }
+        }
+    
         pop();
     }
 
@@ -130,9 +199,8 @@ class BarChart {
 
             fill(this.barColours[0]);
             noStroke();
-            rect(xPos, 0, this.barWidth, -animatedHeight); 
+            rect(xPos, 0, this.barWidth, -animatedHeight);
 
-           
             if (this.animationProgress > 0) {
                 fill(255);
                 ellipse(xPos + this.barWidth / 2, -animatedHeight - this.padding / 2, 30, 30);
@@ -156,9 +224,8 @@ class BarChart {
 
             fill(this.barColours[0]);
             noStroke();
-            rect(0, yPos, animatedLength, this.barWidth); 
+            rect(0, yPos, animatedLength, this.barWidth);
 
-            
             if (this.animationProgress > 0) {
                 fill(255);
                 ellipse(animatedLength + this.padding / 2, yPos + this.barWidth / 2, 30, 30);
@@ -192,20 +259,19 @@ class BarChart {
                 noStroke();
                 rect(xPos, -accumulatedHeight - cappedSegmentHeight, this.barWidth, cappedSegmentHeight);
 
-                
                 if (this.animationProgress > 0) {
                     if (this.type === 'stacked') {
                         fill(255);
-                        ellipse(xPos + this.barWidth / 2, -accumulatedHeight - cappedSegmentHeight - this.padding / 2, 30, 30);
+                        ellipse(xPos + this.barWidth / 2, -accumulatedHeight - cappedSegmentHeight - this.padding / 2, 35, 35);
                         fill(0);
                         textAlign(CENTER, CENTER);
                         textSize(this.labelSize);
                         textFont(this.customFont);
-                        text(this.data[i][this.yValues[j]], xPos + this.barWidth / 2, -accumulatedHeight - cappedSegmentHeight - this.padding / 2);
+                        text(this.formatNumber(this.data[i][this.yValues[j]]), xPos + this.barWidth / 2, -accumulatedHeight - cappedSegmentHeight - this.padding / 2);
                     } else if (this.type === 'percentStacked') {
                         let percent = total === 0 ? 0 : Math.round((value / total) * 100);
                         fill(255);
-                        ellipse(xPos + this.barWidth / 2, -accumulatedHeight - cappedSegmentHeight - this.padding / 2, 30, 30);
+                        ellipse(xPos + this.barWidth / 2, -accumulatedHeight - cappedSegmentHeight - this.padding / 2, 35, 35);
                         fill(0);
                         textAlign(CENTER, CENTER);
                         textSize(this.labelSize);
@@ -216,7 +282,6 @@ class BarChart {
                 accumulatedHeight += cappedSegmentHeight;
             }
 
-            
             if (this.type === 'stacked' && this.animationProgress > 0) {
                 let total = this.yValues.reduce((sum, y) => sum + this.data[i][y], 0);
                 fill(255);
@@ -225,7 +290,7 @@ class BarChart {
                 textAlign(CENTER, CENTER);
                 textSize(this.labelSize);
                 textFont(this.customFont);
-                text(total, xPos + this.barWidth / 2, -accumulatedHeight - this.padding / 2);
+                text(this.formatNumber(total), xPos + this.barWidth / 2, -accumulatedHeight - this.padding / 2);
             }
         }
         pop();
@@ -318,10 +383,10 @@ class BarChart {
         if (this.type === 'horizontal') {
             line(0, this.chartHeight, this.chartWidth, this.chartHeight);
             line(0, this.chartHeight, 0, 0);
-        } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'percentStacked' || this.type === 'linearRegression') {
+        } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'percentStacked' || this.type === 'linearRegression' || this.type === 'curvedArea') {
             line(0, 0, this.chartWidth, 0);
             line(0, 0, 0, -this.chartHeight);
-        } 
+        }
         pop();
     }
 
@@ -345,7 +410,7 @@ class BarChart {
                     line(xPos, this.chartHeight, xPos, this.chartHeight - this.tickLength);
                 }
             }
-        } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'linearRegression') {
+        } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'linearRegression' || this.type === 'curvedArea') {
             const maxValue = max(this.data.map(row => this.yValues.reduce((sum, y) => sum + row[y], 0)));
             const tickIncrement = 100;
             const maxTickValue = Math.ceil(maxValue / tickIncrement) * tickIncrement;
@@ -383,7 +448,7 @@ class BarChart {
                 textAlign(RIGHT, CENTER);
                 textSize(this.labelSize);
                 text(displayTitle, -this.tickLength - 5, yPos + this.barWidth / 2);
-            } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'percentStacked') {
+            } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'percentStacked' || this.type === 'curvedArea') {
                 let xPos = (this.barWidth + this.gap) * i;
                 fill(this.axisTextColour);
                 textFont(this.customFont);
@@ -435,7 +500,7 @@ class BarChart {
                     text(labelValue, xPos, this.chartHeight + this.tickLength + this.padding / 2);
                 }
             }
-        } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'linearRegression') {
+        } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'linearRegression' || this.type === 'curvedArea') {
             const maxValue = max(this.data.map(row => this.yValues.reduce((sum, y) => sum + row[y], 0)));
             const tickIncrement = 100;
             const maxTickValue = Math.ceil(maxValue / tickIncrement) * tickIncrement;
@@ -496,7 +561,7 @@ class BarChart {
                     line(xPos, 0, xPos, this.chartHeight);
                 }
             }
-        } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'linearRegression') {
+        } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'linearRegression' || this.type === 'curvedArea') {
             const maxValue = max(this.data.map(row => this.yValues.reduce((sum, y) => sum + row[y], 0)));
             const tickIncrement = 100;
             const maxTickValue = Math.ceil(maxValue / tickIncrement) * tickIncrement;
@@ -567,7 +632,7 @@ class BarChart {
             if (this.type === 'horizontal') {
                 let xPos = average * this.scaler;
                 line(xPos, 0, xPos, this.chartHeight);
-            } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'percentStacked' || this.type === 'linearRegression' || this.type === 'spider') {
+            } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'percentStacked' || this.type === 'linearRegression' || this.type === 'curvedArea' || this.type === 'spider') {
                 let totalSum = this.data.reduce((sum, row) => sum + this.yValues.reduce((s, y) => s + row[y], 0), 0);
                 let average = totalSum / this.data.length;
                 let yPos = this.type === 'percentStacked' ? 

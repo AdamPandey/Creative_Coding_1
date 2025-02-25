@@ -466,4 +466,42 @@ function setupCharts() {
         barColours: [color(255, 215, 0), color(0, 191, 255)],
         showAverageLine: false
     }));
+
+    charts.push(new BarChart({
+        data: cleanedData,
+        xValue: "Title",
+        yValues: ["Domestic"],
+        type: "curvedArea",
+        chartHeight: 500,
+        chartWidth: 600,
+        margin: 15,
+        axisThickness: 3,
+        chartPosX: 800,
+        chartPosY: 800,
+        customFont: customfont,
+        title: "Curved Area - Box Office",
+        xAxisTitle: "Movies",
+        yAxisTitle: "Box Office (In Millions USD)",
+        barColours: [color(255, 215, 0)],
+        showAverageLine: false
+    }));
+
+    charts.push(new BarChart({
+        data: cleanedData,
+        xValue: "Title",
+        yValues: ["International"],
+        type: "curvedArea",
+        chartHeight: 500,
+        chartWidth: 600,
+        margin: 15,
+        axisThickness: 3,
+        chartPosX: 800,
+        chartPosY: 800,
+        customFont: customfont,
+        title: "Curved Area - Box Office",
+        xAxisTitle: "Movies",
+        yAxisTitle: "Box Office (In Millions USD)",
+        barColours: [color(0, 191, 255)],
+        showAverageLine: false
+    }));
 }
