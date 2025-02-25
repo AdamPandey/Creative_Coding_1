@@ -233,10 +233,10 @@ function getBatmanCommentary() {
     const commentaries = [
         "A horizontal bar chart shows categorical data with bars, their lengths representing values for easy comparison across groups.", // Horizontal - Domestic
         "Internationally, 'The Dark Knight Rises' led with $634.1M, far surpassing 'Batman: The Movie’s' zero international earnings.", // Horizontal - International
-        "Vertically, 'The Dark Knight' stands tall at $534.8M domestically—Gotham’s finest box office moment!", // Vertical - Domestic
+        "Vertically, 'The Dark Knight' stands tall at $534.8M domestically. Gotham’s finest box office moment!", // Vertical - Domestic
         "My BatComputer has analysed the chart. Get ready for more Mayhem on the next chart", // Vertical - International
-        "Stacked, 'The Dark Knight' combines $534.8M domestic and $471.1M international for a massive $1,005.9M total—true justice for Gotham!", // Stacked
-        "In percentages, 'The Dark Knight' shows 53% domestic and 47% international—balanced global appeal.", // Percent Stacked
+        "Stacked, 'The Dark Knight' combines $534.8M domestic and $471.1M international for a massive $1,005.9M total. True justice for Gotham!", // Stacked
+        "In percentages, 'The Dark Knight' shows 53% domestic and 47% international. Balanced global appeal.", // Percent Stacked
         "My regression analysis shows domestic earnings rising steadily since 1966. Gotham’s box office power grows!", // Linear Regression
         "The spider plot reveals 'The Dark Knight’s' dominance across domestic and international markets, unmatched in my bat-cave!", // Spider
     ];
