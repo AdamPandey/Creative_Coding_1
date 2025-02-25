@@ -176,7 +176,7 @@ function drawVisualization() {
         try {
             if (!song.isPlaying()) {
                 song.loop(); 
-                if (!isMuted) song.setVolume(0.5);
+                if (!isMuted) song.setVolume(0);
                 else song.setVolume(0);
             }
         } catch (error) {

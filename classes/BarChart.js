@@ -447,7 +447,7 @@ class BarChart {
                 textFont(this.customFont);
                 textAlign(RIGHT, CENTER);
                 textSize(this.labelSize);
-                text(displayTitle, -this.tickLength - 5, yPos + this.barWidth / 2);
+                text(displayTitle, -this.tickLength - 15, yPos + this.barWidth / 2 + 10);
             } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'percentStacked' || this.type === 'curvedArea') {
                 let xPos = (this.barWidth + this.gap) * i;
                 fill(this.axisTextColour);
@@ -497,7 +497,7 @@ class BarChart {
                 const labelValue = i * tickIncrement;
                 const xPos = i * tickIncrement * scaler;
                 if (xPos <= this.chartWidth) {
-                    text(labelValue, xPos, this.chartHeight + this.tickLength + this.padding / 2);
+                    text(labelValue, xPos + 5, this.chartHeight + this.tickLength / 2 +20);
                 }
             }
         } else if (this.type === 'vertical' || this.type === 'stacked' || this.type === 'linearRegression' || this.type === 'curvedArea') {
@@ -594,7 +594,7 @@ class BarChart {
         if (this.type === 'horizontal') {
             text(this.xAxisTitle, this.chartPosX + this.chartWidth / 2, this.chartPosY + this.chartHeight + this.padding * 2);
         } else if (this.type !== 'spider') {
-            text(this.xAxisTitle, this.chartPosX + this.chartWidth / 2, this.chartPosY + this.padding * 2);
+            text(this.xAxisTitle, this.chartPosX + this.chartWidth / 2, this.chartPosY + 120);
         }
         pop();
     }
@@ -607,7 +607,7 @@ class BarChart {
         textFont(this.customFont);
         push();
         if (this.type === 'horizontal') {
-            translate(this.chartPosX - 100, this.chartPosY + this.chartHeight / 2);
+            translate(this.chartPosX - 150, this.chartPosY + this.chartHeight / 2);
         } else if (this.type === 'spider') {
             // Do nothing for spider plot
         } else {
