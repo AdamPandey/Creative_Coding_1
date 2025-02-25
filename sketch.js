@@ -138,10 +138,10 @@ function drawVisualization() {
     let muteButtonY = height - muteButtonHeight - 50;
 
     
-    console.log("Canvas size:", width, height);
-    console.log("Next Button Position:", nextButtonX, nextButtonY);
-    console.log("Prev Button Position:", prevButtonX, prevButtonY);
-    console.log("Mute Button Position:", muteButtonX, muteButtonY);
+    // console.log("Canvas size:", width, height);
+    // console.log("Next Button Position:", nextButtonX, nextButtonY);
+    // console.log("Prev Button Position:", prevButtonX, prevButtonY);
+    // console.log("Mute Button Position:", muteButtonX, muteButtonY);
 
     fill(255, 215, 0);
     rect(nextButtonX, nextButtonY, nextButtonWidth, nextButtonHeight, 20);
@@ -345,7 +345,7 @@ function setupCharts() {
         title: "Horizontal Bar Chart - International Box Office",
         xAxisTitle: "Box Office (In Millions USD)",
         yAxisTitle: "Movie Title",
-        barColours: [color(255, 215, 0)],
+        barColours: [color(0, 191, 255)],
         showAverageLine: true
     }));
 
@@ -385,7 +385,7 @@ function setupCharts() {
         title: "Vertical Bar Chart - International Box Office",
         xAxisTitle: "Movie Title",
         yAxisTitle: "Box Office (In Millions USD)",
-        barColours: [color(255, 215, 0)],
+        barColours: [color(0, 191, 255)],
         showAverageLine: true
     }));
 
