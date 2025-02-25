@@ -95,7 +95,7 @@ class BarChart {
         };
     }
 
-    
+    //Formats the numbers if greater than 1 billion or equal to 1 billion
     formatNumber(value) {
         if (value >= 1000000000) {
             return (value / 1000000000).toFixed(1) + " M";
@@ -107,7 +107,7 @@ class BarChart {
         return value.toString();
     }
 
-
+    //Renders the Hover functionality
     renderHover() {
         if (this.hoveredIndex !== -1 && this.hoveredValue !== null) {
             let x = mouseX + 10; 
@@ -139,7 +139,7 @@ class BarChart {
             }
         }
     }
-
+    //Checks whether mouse is hovering over the bars, used mouse position and algorithm to check hover over entire bar
     checkHover() {
         this.hoveredIndex = -1;
         this.hoveredValue = null;
@@ -231,7 +231,7 @@ class BarChart {
             }
         }
     }
-
+    //Calculates Linear regression using SSR method and sends to render function
     calculateLinearRegression() {
         const x = this.data.map(row => parseFloat(row[this.xValue]));
         const y = this.data.map(row => parseFloat(row[this.yValues[0]]));
@@ -245,7 +245,7 @@ class BarChart {
         this.m = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
         this.b = (sumY - this.m * sumX) / n;
     }
-
+    //Renders bars if they meet a certain criteria
     renderBars() {
         push();
         translate(this.chartPosX, this.chartPosY);
@@ -266,7 +266,7 @@ class BarChart {
 
         pop();
     }
-
+    //Renders Curved Area chart by calculating creating cusom shape and drawing shape from max value till axis
     renderCurvedArea() {
         push();
         translate(this.margin + 25, 0);
@@ -320,7 +320,7 @@ class BarChart {
     
         pop();
     }
-
+    //Renders Vertical bars with custom animation sent through quadratic equation
     renderVerticalBars() {
         push();
         translate(this.margin, 0);
@@ -345,7 +345,7 @@ class BarChart {
         }
         pop();
     }
-
+    //Renders horizontal bars by changing orientation from original function
     renderHorizontalBars() {
         push();
         translate(0, this.margin);
@@ -370,14 +370,15 @@ class BarChart {
         }
         pop();
     }
-
+    //Renders different types of stacked bars if criteria met for certain bar type 
+    //*New syntax learnt, the reduce method iterates over the array and "reduces" it to a single value by applying a function to each element. Can also be done with a for loop.
     renderStackedBars() {
         push();
         translate(this.margin, 0);
         for (let i = 0; i < this.data.length; i++) {
             let xPos = (this.barWidth + this.gap) * i;
             let accumulatedHeight = 0;
-            let total = this.yValues.reduce((sum, y) => sum + this.data[i][y], 0);
+            let total = this.yValues.reduce((sum, y) => sum + this.data[i][y], 0);//*
 
             for (let j = 0; j < this.yValues.length; j++) {
                 let value = this.data[i][this.yValues[j]];
@@ -427,7 +428,7 @@ class BarChart {
         }
         pop();
     }
-
+    //The function creates a scatter plot by drawing circles for each data point from `this.data`, scaling their x and y values to fit the chart and labeling them with their y-values. It also draws a red linear regression line across the chart using a slope (this.m) and intercept (this.b), calculated between the minimum and maximum x-values. The function uses transformations and styling to position the plot within a margined area, ensuring points and the line stay within the chart’s bounds.
     renderLinearRegressionPoints() {
         push();
         translate(this.margin, 0);
@@ -460,7 +461,7 @@ class BarChart {
 
         pop();
     }
-
+    //Function creates a spider (radar) plot by drawing radius axes from the center of a chart, with each axis representing a data point from this.data and labeled with its x-value or an abbreviated title. It then plots multiple closed shapes (one per y-value in this.yValues) by connecting points along these axes, with distances from the center scaled based on the y-values and styled with different colors. The plot is centered within a padded circular area, using transformations and custom styling for axes, labels, and lines.
     renderSpiderPlot() {
         push();
         translate(this.chartWidth / 2, this.chartHeight / 2);
