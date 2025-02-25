@@ -174,15 +174,18 @@ class BarChart {
         
         if (this.animationProgress > 0) {
             for (let i = 0; i < this.data.length; i++) {
-                let x = i * (this.barWidth + this.gap);
-                let y = -this.data[i][this.yValues[0]] * this.scaler * this.easeInOutQuad(this.animationProgress);
-                fill(255);
-                ellipse(x, y, 30, 30);
-                fill(0);
-                textAlign(CENTER, CENTER);
-                textSize(this.labelSize);
-                textFont(this.customFont);
-                text(this.formatNumber(this.data[i][this.yValues[0]]), x, y);
+                let value = this.data[i][this.yValues[0]];
+                if (value !== 0) { 
+                    let x = i * (this.barWidth + this.gap);
+                    let y = -value * this.scaler * this.easeInOutQuad(this.animationProgress);
+                    fill(255);
+                    ellipse(x, y, 30, 30);
+                    fill(0);
+                    textAlign(CENTER, CENTER);
+                    textSize(this.labelSize);
+                    textFont(this.customFont);
+                    text(this.formatNumber(value), x, y);
+                }
             }
         }
     
